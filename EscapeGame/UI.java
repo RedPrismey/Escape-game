@@ -8,6 +8,9 @@ public class UI extends JFrame {
 	public UI() {
 		this.setExtendedState(JFrame.MAXIMIZED_BOTH);
 		this.setUndecorated(true);
+
+		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
 		this.setTitle(TITLE);
 
 		this.setVisible(true);
