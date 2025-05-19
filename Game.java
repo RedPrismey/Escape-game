@@ -1,5 +1,3 @@
-package EscapeGame;
-
 import java.awt.EventQueue;
 
 public class Game {
