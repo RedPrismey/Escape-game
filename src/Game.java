@@ -1,8 +1,11 @@
 import java.awt.EventQueue;
-import Player.Item;
+import UI.*;
+import Player.*;
 
 public class Game {
   public static void main(String[] args) {
-    Item i = new Item("Carte");
+    EventQueue.invokeLater(() -> {
+      new UI();
+    });
   }
 }

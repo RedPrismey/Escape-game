@@ -1,3 +1,5 @@
+package UI;
+
 import javax.swing.JFrame;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
