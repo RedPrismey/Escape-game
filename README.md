@@ -1,6 +1,6 @@
 # Lancer le jeu
 
-```
-javac Game.java
-java Game
+```bash
+javac src/Game.java
+java src/Game
 ```
