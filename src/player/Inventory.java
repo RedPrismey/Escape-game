@@ -1,6 +1,4 @@
-package Player;
-
-import java.util.Arrays;
+package player;
 
 public class Inventory {
   private final static int INVENTORY_SIZE = 6;
