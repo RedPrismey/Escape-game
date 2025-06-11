@@ -110,7 +110,11 @@ public class Inventory {
     return found;
   }
 
-  public String getItems() {
+  public Item[] getItem() {
+    return this.items;
+  }
+
+  public String itemsToString() {
     String out = "[";
 
     out += "0:" + items[0].getName();
@@ -127,8 +131,12 @@ public class Inventory {
   }
 
   public String toString() {
-    return "Inventory [\nitems=" + this.getItems() + ",\nnumberOfItems=" + numberOfItems + ",\nfull=" + full
+    return "Inventory [\nitems=" + this.itemsToString() + ",\nnumberOfItems=" + numberOfItems + ",\nfull=" + full
         + "\n]";
+  }
+
+  public Item get(int i) {
+    return items[i];
   }
 
   public static int getInventorySize() {
