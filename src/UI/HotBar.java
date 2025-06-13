@@ -41,4 +41,9 @@ class HotBar extends JPanel {
       }
     }
   }
+
+  public void draw(Graphics g, int width, int height) {
+    setSize(width, height);
+    repaint();
+  }
 }
