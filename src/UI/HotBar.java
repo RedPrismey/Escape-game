@@ -5,45 +5,42 @@ import javax.swing.*;
 import player.*;
 
 class HotBar extends JPanel {
-  private Inventory inv;
+  private final Inventory inv;
 
   public HotBar(Inventory i) {
     this.inv = i;
     setOpaque(false);
   }
 
-  @Override
-  protected void paintComponent(Graphics g) {
-    super.paintComponent(g);
-
-    int panelWidth = getWidth();
-    int panelHeight = getHeight();
+  public void draw(Graphics g, int x, int y, int width, int height) {
+    /*---[Partie inventaire]---*/
+    // Fond blanc
+    g.setColor(Color.WHITE);
+    g.fillRect(x, y, width, height);
 
     int totalSlots = Inventory.getInventorySize();
 
-    int slotWidth = (int) (panelWidth * 0.05); // 5% largeur par slot
-    int slotHeight = (int) (panelHeight * 0.8); // 80% hauteur du panel
-    int padding = (int) (panelWidth * 0.01); // 1% espace entre slots
+    // Pour des cases carrées, hauteur = largeur
+    int slotSize = (int) (height * 0.8);
 
-    int totalWidth = totalSlots * slotWidth + (totalSlots - 1) * padding;
-    int startX = (int) (totalWidth * 0.01);
-    int y = (panelHeight - slotHeight) / 2;
+    int padding = (int) (width * 0.01);
+
+    int totalWidth = totalSlots * slotSize + (totalSlots - 1) * padding;
+
+    int startX = (int) (totalWidth * 0.02);
+    int slotY = y + (height - slotSize) / 2;
 
     for (int i = 0; i < totalSlots; i++) {
-      int x = startX + i * (slotWidth + padding);
-
+      // Dessine les bordures
+      int slotX = startX + i * (slotSize + padding);
       g.setColor(Color.GRAY);
-      g.drawRect(x, y, slotWidth, slotHeight);
+        g.drawRect(slotX, slotY, slotSize, slotSize);
 
+      // Dessine le sprite des items présents
       Item item = inv.get(i);
       if (item != null && item.getSprite() != null) {
-        g.drawImage(item.getSprite(), x + 4, y + 4, slotWidth - 8, slotHeight - 8, null);
+        g.drawImage(item.getSprite(), slotX + 4, slotY + 4, slotSize - 8, slotSize - 8, null);
       }
     }
-  }
-
-  public void draw(Graphics g, int width, int height) {
-    setSize(width, height);
-    repaint();
   }
 }

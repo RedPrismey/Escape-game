@@ -1,18 +1,20 @@
 package gameState;
 
+import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class Room {
   public String name;
   public int id;
-  private ArrayList<Room> linkedTo;
+  private final ArrayList<Room> linkedTo;
   private BufferedImage background;
 
   public Room(String name, int id) {
     this.name = name;
     this.id = id;
-    this.linkedTo = new ArrayList<Room>();
+    this.linkedTo = new ArrayList<>();
   }
 
   public Room(String name, int id, ArrayList<Room> linkedTo) {
@@ -23,7 +25,7 @@ public class Room {
   /**
    * Tells if the move from the current room to the `destination` room is valid
    *
-   * @param destination
+   * @param destination the room to which the player wants to move
    * @return true if the `destination` room is linked to the current room, false
    *         otherwise
    */
@@ -45,10 +47,10 @@ public class Room {
   }
 
   /**
-   * Delete all the rooms that have the same id as `neighbour`
+   * Delete all the rooms that have the same id as `neighbor`
    *
-   * @param neighbour
-   * @throws RoomNotFoundException
+   * @param id the id of the room to remove
+   * @throws RoomNotFoundException if no room with the given id is found
    */
   public void removeNeighbour(int id) {
     boolean found = linkedTo.removeIf(room -> (room.id == id));
@@ -59,13 +61,13 @@ public class Room {
   }
 
   /**
-   * Delete all the rooms that have the same name as `neighbour`
+   * Delete all the rooms that have the same name as `neighbor`
    *
-   * @param neighbour
-   * @throws RoomNotFoundException
+   * @param name the name of the room to remove
+   * @throws RoomNotFoundException if no room with the given name is found
    */
   public void removeNeighbour(String name) {
-    boolean found = linkedTo.removeIf(room -> (room.name == name));
+    boolean found = linkedTo.removeIf(room -> (Objects.equals(room.name, name)));
 
     if (!found) {
       throw new RoomNotFoundException();
@@ -73,10 +75,10 @@ public class Room {
   }
 
   /**
-   * Delete all the rooms that are equal to `neighbour`
+   * Delete all the rooms that are equal to `neighbor`
    *
-   * @param neighbour
-   * @throws RoomNotFoundException
+   * @param neighbour the room to remove
+   * @throws RoomNotFoundException if no room corresponding to neighbor is found
    */
   public void removeNeighbour(Room neighbour) {
     boolean found = linkedTo.removeIf(room -> (room.equals(neighbour)));
@@ -92,6 +94,14 @@ public class Room {
 
   public BufferedImage getBackground() {
     return this.background;
+  }
+
+  public void draw(Graphics g, int width, int height) {
+    BufferedImage bg = getBackground();
+    if (bg != null) {
+      g.drawImage(bg, 0, 0, width, height, null);
+    }
+    // Ici tu pourras ajouter d'autres éléments à dessiner dans la room
   }
 
   @Override
@@ -111,14 +121,11 @@ public class Room {
     if (id != other.id)
       return false;
     if (linkedTo == null) {
-      if (other.linkedTo != null)
-        return false;
-    } else if (!linkedTo.equals(other.linkedTo))
-      return false;
-    return true;
+        return other.linkedTo == null;
+    } else return linkedTo.equals(other.linkedTo);
   }
 
-  public class RoomNotFoundException extends RuntimeException {
+  public static class RoomNotFoundException extends RuntimeException {
   }
 
 }
