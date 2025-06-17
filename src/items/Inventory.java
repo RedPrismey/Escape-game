@@ -14,10 +14,6 @@ public class Inventory {
   public Inventory() {}
 
   public void draw(Graphics g, int x, int y, int width, int height) {
-    // Fond blanc
-    g.setColor(Color.WHITE);
-    g.fillRect(x, y, width, height);
-
     int totalSlots = Inventory.getInventorySize();
 
     // Pour des cases carrées, hauteur = largeur

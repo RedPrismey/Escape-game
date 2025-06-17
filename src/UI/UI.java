@@ -6,6 +6,7 @@ import gameLogic.GameStatus;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.List;
 
 /**
  * The UI class is responsible for rendering the game interface.
@@ -48,9 +49,9 @@ public class UI extends JPanel {
         }
         double scale = targetHeight / (double) BASE_HEIGHT;
 
-        // Passer le scale à la room
-        Action action = game.getCurrentRoom().click(x, y, scale);
-        game.executeAction(action);
+        // On récupère la liste d'actions à exécuter
+        List<Action> actions = game.getCurrentRoom().click(x, y, scale);
+        game.executeAction(actions);
         repaint();
       }
     });
@@ -64,9 +65,25 @@ public class UI extends JPanel {
 
     game.update();
 
+    // White background for the hotbar
+    g2.setColor(Color.WHITE);
+    g2.fillRect(0, HOTBAR_Y, BASE_WIDTH - COUNTDOWN_WIDTH, HOTBAR_HEIGHT);
+
     game.getCurrentRoom().draw(g2, BASE_WIDTH, BASE_HEIGHT - HOTBAR_HEIGHT);
     game.inventory.draw(g2, 0, HOTBAR_Y, BASE_WIDTH - COUNTDOWN_WIDTH, HOTBAR_HEIGHT);
     game.countdown.draw(g2, BASE_WIDTH - COUNTDOWN_WIDTH, HOTBAR_Y, COUNTDOWN_WIDTH, HOTBAR_HEIGHT);
+
+    // Affichage du texte temporaire dans la hotbar
+    String hotbarText = game.getHotbarText();
+    if (hotbarText != null) {
+      g2.setFont(new Font("Arial", Font.BOLD, 36));
+      g2.setColor(Color.BLACK);
+      FontMetrics fm = g2.getFontMetrics();
+      int textWidth = fm.stringWidth(hotbarText);
+      int x = (BASE_WIDTH - COUNTDOWN_WIDTH - textWidth) / 2;
+      int y = HOTBAR_Y + (HOTBAR_HEIGHT + fm.getAscent()) / 2 - 10;
+      g2.drawString(hotbarText, x, y);
+    }
 
     if (game.status == GameStatus.LOST) {
       drawGameOver(g2);

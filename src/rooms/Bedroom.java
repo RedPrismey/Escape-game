@@ -9,9 +9,12 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 
 public class Bedroom extends Room {
     private static final Rectangle doorHitbox = new Rectangle(928, 151, 536, 600);
+    private static final Rectangle bookHitbox = new Rectangle(672, 600, 180, 40);
+    private static final Rectangle screenHitbox = new Rectangle(1491, 297, 253, 165);
 
     public Bedroom(String name, int id) {
         super(name, id);
@@ -28,13 +31,20 @@ public class Bedroom extends Room {
         super.draw(g, width, height);
 
         doorHitbox.draw(g);
+        bookHitbox.draw(g);
+        screenHitbox.draw(g);
     }
 
     @Override
-    public Action click(int x, int y, double scale) {
+    public List<Action> click(int x, int y, double scale) {
         if (doorHitbox.contains(x, y, scale)) {
-            System.out.println("Skalala, nous sommes partis!");
+            return List.of(new Action.ShowHotbarText("Skalala, nous sommes paris!"));
+        } else if (bookHitbox.contains(x, y, scale)) {
+            return List.of(
+                new Action.ShowHotbarText("Vous avez ramassé le livre."),
+                new Action.CollectItem(new Cle())
+            );
         }
-        return null;
+        return List.of();
     }
 }

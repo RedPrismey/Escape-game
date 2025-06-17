@@ -21,6 +21,10 @@ public class GameState {
 
   public Countdown countdown;
 
+  // Texte temporaire à afficher dans la hotbar et son timer (en ms)
+  private String hotbarText = null;
+  private long hotbarTextExpireAt = 0;
+
 
   public GameState(int currentRoomID, List<Room> rooms, Inventory inv) {
     this.rooms = rooms;
@@ -39,6 +43,10 @@ public class GameState {
 
   public GameStatus update() {
     countdown.update();
+    // Nettoyer le texte si le timer est dépassé
+    if (hotbarText != null && System.currentTimeMillis() > hotbarTextExpireAt) {
+      hotbarText = null;
+    }
     if (countdown.getSecondsLeft() <= 0) {
       status = GameStatus.LOST;
     }
@@ -70,7 +78,16 @@ public class GameState {
     }
   }
 
-  public void executeAction(Action action) {
+  public void executeAction(List<Action> actions) {
+    if (actions != null) {
+      for (Action action : actions) {
+        executeAction(action);
+      }
+    }
+  }
+
+  // Méthode privée pour une seule action (appelée par la version liste)
+  private void executeAction(Action action) {
       switch (action) {
           case Action.ChangeRoom changeRoom -> {
             Room current = getCurrentRoom();
@@ -92,7 +109,17 @@ public class GameState {
           }
           case Action.LaunchMiniGame launchMiniGame ->
                   System.out.println("Lancement du minijeu : " + launchMiniGame.miniGameName);
+          case Action.ShowHotbarText showText -> {
+            this.hotbarText = showText.text;
+            this.hotbarTextExpireAt = System.currentTimeMillis() + 5000; // 5 secondes
+          }
+          // Suppression du cas Multiple, plus nécessaire
           case null, default -> {}
       }
+  }
+
+  // Getter pour le texte de la hotbar
+  public String getHotbarText() {
+    return hotbarText;
   }
 }

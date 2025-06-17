@@ -20,4 +20,9 @@ public abstract class Action {
         public final String miniGameName;
         public LaunchMiniGame(String miniGameName) { this.miniGameName = miniGameName; }
     }
+
+    public static class ShowHotbarText extends Action {
+        public final String text;
+        public ShowHotbarText(String text) { this.text = text; }
+    }
 }

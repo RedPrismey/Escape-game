@@ -3,6 +3,7 @@ package gameLogic;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 public class Room {
@@ -30,7 +31,7 @@ public class Room {
    * @param y the y-coordinate of the click
    * @return an Action object representing the action to perform, or null if no action is defined
    */
-  public Action click(int x, int y, double scale) {
+  public List<Action> click(int x, int y, double scale) {
     return null;
   }
 
