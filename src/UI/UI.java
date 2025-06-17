@@ -27,32 +27,26 @@ public class UI extends JPanel {
 
   private static final int COUNTDOWN_WIDTH = 180;
 
-
   public UI(GameState gameState) {
     this.game = gameState;
 
     // repaint regularly to update the countdown
     new Timer(200, _ -> repaint()).start();
 
+    // for mouse events
     addMouseListener(new java.awt.event.MouseAdapter() {
       @Override
       public void mouseClicked(java.awt.event.MouseEvent e) {
         int x = e.getX();
         int y = e.getY();
 
-        // Calcul du facteur d'échelle comme dans initGraphics
-        int panelWidth = getWidth();
-        int panelHeight = getHeight();
-        int targetHeight = (int) (panelWidth * ASPECT_RATIO_H / (double) ASPECT_RATIO_W);
-        if (targetHeight > panelHeight) {
-          targetHeight = panelHeight;
-        }
-        double scale = targetHeight / (double) BASE_HEIGHT;
+        double scale = getScale();
 
-        // On récupère la liste d'actions à exécuter
-        List<Action> actions = game.getCurrentRoom().click(x, y, scale);
-        game.executeAction(actions);
-        repaint();
+        if (game.status == GameStatus.PLAYING) {
+          List<Action> actions = game.getCurrentRoom().click(x, y, scale);
+          game.executeAction(actions);
+          repaint();
+        }
       }
     });
   }
@@ -73,23 +67,28 @@ public class UI extends JPanel {
     game.inventory.draw(g2, 0, HOTBAR_Y, BASE_WIDTH - COUNTDOWN_WIDTH, HOTBAR_HEIGHT);
     game.countdown.draw(g2, BASE_WIDTH - COUNTDOWN_WIDTH, HOTBAR_Y, COUNTDOWN_WIDTH, HOTBAR_HEIGHT);
 
-    // Affichage du texte temporaire dans la hotbar
-    String hotbarText = game.getHotbarText();
-    if (hotbarText != null) {
-      g2.setFont(new Font("Arial", Font.BOLD, 36));
-      g2.setColor(Color.BLACK);
-      FontMetrics fm = g2.getFontMetrics();
-      int textWidth = fm.stringWidth(hotbarText);
-      int x = (BASE_WIDTH - COUNTDOWN_WIDTH - textWidth) / 2;
-      int y = HOTBAR_Y + (HOTBAR_HEIGHT + fm.getAscent()) / 2 - 10;
-      g2.drawString(hotbarText, x, y);
-    }
+    drawHotbarText(g2, game.getHotbarText());
 
     if (game.status == GameStatus.LOST) {
       drawGameOver(g2);
     }
 
     g2.dispose();
+  }
+
+  private void drawHotbarText(Graphics2D g, String text) {
+    if (text == null) {
+      return;
+    }
+
+    g.setFont(new Font("Arial", Font.BOLD, 36));
+    g.setColor(Color.BLACK);
+
+    FontMetrics fm = g.getFontMetrics();
+    int x = 700;
+    int y = HOTBAR_Y + (HOTBAR_HEIGHT + fm.getAscent()) / 2 - 10;
+
+    g.drawString(text, x, y);
   }
 
   private void drawGameOver(Graphics2D g2) {
@@ -116,6 +115,22 @@ public class UI extends JPanel {
 
     g2.setColor(Color.RED);
     g2.drawString(gameOverText, x, y + ascent);
+  }
+
+  /**
+   * Calculate and return the scale of the window
+   *
+   * @return the scale of the window
+   */
+  private double getScale() {
+    int panelWidth = getWidth();
+    int panelHeight = getHeight();
+    int targetHeight = (int) (panelWidth * ASPECT_RATIO_H / (double) ASPECT_RATIO_W);
+    if (targetHeight > panelHeight) {
+      targetHeight = panelHeight;
+    }
+
+    return targetHeight / (double) BASE_HEIGHT;
   }
 
   /**
