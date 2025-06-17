@@ -1,1 +1,9 @@
 *.class
+.DS_Store
+.idea/*
+out/*
+EscapeGame.iml
+src/.idea/*
+src/out/*
+src/EscapeGame.iml
+src/Escape-game.iml
