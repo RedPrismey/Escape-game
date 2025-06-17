@@ -101,7 +101,6 @@ public class Room {
     if (bg != null) {
       g.drawImage(bg, 0, 0, width, height, null);
     }
-    // Ici tu pourras ajouter d'autres éléments à dessiner dans la room
   }
 
   @Override

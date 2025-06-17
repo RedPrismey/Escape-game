@@ -1,22 +1,54 @@
 package player;
 
+import java.awt.*;
+
 public class Inventory {
   private final static int INVENTORY_SIZE = 6;
-  private Item[] items = new Item[INVENTORY_SIZE];
+  private final Item[] items = new Item[INVENTORY_SIZE];
   private int numberOfItems = 0;
   private boolean full = false;
-  private boolean[] itemPresent = new boolean[INVENTORY_SIZE]; // permet de savoir où il y a des items
+  private final boolean[] itemPresent = new boolean[INVENTORY_SIZE]; // permet de savoir où il y a des items
                                                                // dans l'inventaire sans le parcourir à
                                                                // chaque fois
 
-  public Inventory() {
-  }
+  public Inventory() {}
+
+  public void draw(Graphics g, int x, int y, int width, int height) {
+    // Fond blanc
+    g.setColor(Color.WHITE);
+    g.fillRect(x, y, width, height);
+
+    int totalSlots = Inventory.getInventorySize();
+
+    // Pour des cases carrées, hauteur = largeur
+    int slotSize = (int) (height * 0.8);
+
+    int padding = (int) (width * 0.01);
+
+    int totalWidth = totalSlots * slotSize + (totalSlots - 1) * padding;
+
+    int startX = (int) (totalWidth * 0.02);
+    int slotY = y + (height - slotSize) / 2;
+
+    for (int i = 0; i < totalSlots; i++) {
+      // Dessine les bordures
+      int slotX = startX + i * (slotSize + padding);
+      g.setColor(Color.GRAY);
+      g.drawRect(slotX, slotY, slotSize, slotSize);
+
+      // Dessine le sprite des items présents
+      Item item = items[i];
+      if (item != null && item.getSprite() != null) {
+        g.drawImage(item.getSprite(), slotX + 4, slotY + 4, slotSize - 8, slotSize - 8, null);
+      }
+    }
+    }
 
   /**
    * Add the Item `item` to the Inventory
    *
-   * @param item
-   * @throws InventoryFullException
+   * @param item the Item to add
+   * @throws InventoryFullException if the Inventory is full
    */
   public void addItem(Item item) {
     if (full) {
@@ -41,15 +73,15 @@ public class Inventory {
 
   /**
    * Remove the first item with the name matching `itemName`
-   * 
-   * @param name
-   * @throws ItemNotFoundException
+   *
+   * @param itemName the name of the Item to remove
+   * @throws ItemNotFoundException if no Item with the name `itemName` is found in the Inventory
    */
   public void removeItem(String itemName) {
     boolean found = false;
 
     for (int i = 0; i < INVENTORY_SIZE; i++) {
-      if (items[i] != null && items[i].getName() == itemName) {
+      if (items[i] != null && items[i].getName().equals(itemName)) {
         found = true;
 
         items[i] = null;
@@ -72,9 +104,9 @@ public class Inventory {
   /**
    * Delete the Item at index `index`
    *
-   * @param index
-   * @throws IndexOutOfBoundsException
-   * @throws NoItemAtIndexException
+   * @param index the index of the Item to remove
+   * @throws IndexOutOfBoundsException if `index` is not in the range [0, INVENTORY_SIZE)
+   * @throws NoItemAtIndexException if there is no Item at index `index`
    */
   public void removeItem(int index) {
     if (index >= INVENTORY_SIZE || index < 0) {
@@ -95,15 +127,16 @@ public class Inventory {
   /**
    * Check if Invertory contains an Item with the name `itemName`
    *
-   * @param itemName
+   * @param itemName the name of the Item to check
    * @return true if an Item with the name `itemName` is present in inventory
    */
   public boolean isPresent(String itemName) {
     boolean found = false;
 
     for (int i = 0; i < INVENTORY_SIZE; i++) {
-      if (items[i] != null && items[i].getName() == itemName) {
+      if (items[i] != null && items[i].getName().equals(itemName)) {
         found = true;
+        break;
       }
     }
 
@@ -115,15 +148,15 @@ public class Inventory {
   }
 
   public String itemsToString() {
-    String out = "[";
+    StringBuilder out = new StringBuilder("[");
 
-    out += "0:" + items[0].getName();
+    out.append("0:").append(items[0].getName());
 
     for (int i = 1; i < INVENTORY_SIZE; i++) {
       if (items[i] != null) {
-        out += ", " + i + ":" + items[i].getName();
+        out.append(", ").append(i).append(":").append(items[i].getName());
       } else {
-        out += ", " + i + ":null";
+        out.append(", ").append(i).append(":null");
       }
     }
 
@@ -155,12 +188,12 @@ public class Inventory {
     return itemPresent;
   }
 
-  public class InventoryFullException extends RuntimeException {
+  public static class InventoryFullException extends RuntimeException {
   }
 
-  public class NoItemAtIndexException extends RuntimeException {
+  public static class NoItemAtIndexException extends RuntimeException {
   }
 
-  public class ItemNotFoundException extends RuntimeException {
+  public static class ItemNotFoundException extends RuntimeException {
   }
 }
