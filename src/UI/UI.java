@@ -1,7 +1,8 @@
 package UI;
 
-import gameState.GameState;
-import gameState.GameStatus;
+import gameLogic.Action;
+import gameLogic.GameState;
+import gameLogic.GameStatus;
 
 import javax.swing.*;
 import java.awt.*;
@@ -31,6 +32,28 @@ public class UI extends JPanel {
 
     // repaint regularly to update the countdown
     new Timer(200, _ -> repaint()).start();
+
+    addMouseListener(new java.awt.event.MouseAdapter() {
+      @Override
+      public void mouseClicked(java.awt.event.MouseEvent e) {
+        int x = e.getX();
+        int y = e.getY();
+
+        // Calcul du facteur d'échelle comme dans initGraphics
+        int panelWidth = getWidth();
+        int panelHeight = getHeight();
+        int targetHeight = (int) (panelWidth * ASPECT_RATIO_H / (double) ASPECT_RATIO_W);
+        if (targetHeight > panelHeight) {
+          targetHeight = panelHeight;
+        }
+        double scale = targetHeight / (double) BASE_HEIGHT;
+
+        // Passer le scale à la room
+        Action action = game.getCurrentRoom().click(x, y, scale);
+        game.executeAction(action);
+        repaint();
+      }
+    });
   }
 
   @Override

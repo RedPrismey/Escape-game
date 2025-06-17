@@ -1,4 +1,4 @@
-package player;
+package items;
 
 import java.awt.*;
 
@@ -8,8 +8,8 @@ public class Inventory {
   private int numberOfItems = 0;
   private boolean full = false;
   private final boolean[] itemPresent = new boolean[INVENTORY_SIZE]; // permet de savoir où il y a des items
-                                                               // dans l'inventaire sans le parcourir à
-                                                               // chaque fois
+                                                                     // dans l'inventaire sans le parcourir à
+                                                                     // chaque fois
 
   public Inventory() {}
 

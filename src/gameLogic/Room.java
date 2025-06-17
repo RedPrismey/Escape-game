@@ -1,6 +1,6 @@
-package gameState;
+package gameLogic;
 
-import java.awt.Graphics;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Objects;
@@ -23,6 +23,18 @@ public class Room {
   }
 
   /**
+   * Returns the action to perform when the player clicks on a specific point in the room.
+   * This method should be overridden by subclasses to provide specific actions.
+   *
+   * @param x the x-coordinate of the click
+   * @param y the y-coordinate of the click
+   * @return an Action object representing the action to perform, or null if no action is defined
+   */
+  public Action click(int x, int y, double scale) {
+    return null;
+  }
+
+  /**
    * Tells if the move from the current room to the `destination` room is valid
    *
    * @param destination the room to which the player wants to move
@@ -41,6 +53,7 @@ public class Room {
 
     return valid;
   }
+
 
   public void addNeighbour(Room neighbour) {
     this.linkedTo.addLast(neighbour);
@@ -96,7 +109,7 @@ public class Room {
     return this.background;
   }
 
-  public void draw(Graphics g, int width, int height) {
+  public void draw(Graphics2D g, int width, int height) {
     BufferedImage bg = getBackground();
     if (bg != null) {
       g.drawImage(bg, 0, 0, width, height, null);
