@@ -5,14 +5,12 @@ import javax.imageio.ImageIO;
 import java.awt.image.*;
 import java.io.IOException;
 
-import player.Item;
-
 public class Cle extends Item {
   public Cle() {
     super("Clé");
 
     try {
-      URL url = getClass().getResource("./cle.jpg");
+      URL url = getClass().getResource("./assets/cle.jpg");
       BufferedImage s = ImageIO.read(url);
       super.setSprite(s);
     } catch (IOException e) {

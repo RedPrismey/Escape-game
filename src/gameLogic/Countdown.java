@@ -1,4 +1,4 @@
-package gameState;
+package gameLogic;
 
 import java.awt.*;
 
