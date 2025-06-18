@@ -3,12 +3,13 @@ package gameLogic;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 public class Room {
   public String name;
   public int id;
-  private final ArrayList<Room> linkedTo;
+  private final List<Room> linkedTo;
   private BufferedImage background;
 
   public Room(String name, int id) {
@@ -17,20 +18,22 @@ public class Room {
     this.linkedTo = new ArrayList<>();
   }
 
-  public Room(String name, int id, ArrayList<Room> linkedTo) {
+  public Room(String name, int id, List<Room> linkedTo) {
     this.id = id;
     this.linkedTo = linkedTo;
   }
 
   /**
-   * Returns the action to perform when the player clicks on a specific point in the room.
+   * Returns the action to perform when the player clicks on a specific point in
+   * the room.
    * This method should be overridden by subclasses to provide specific actions.
    *
    * @param x the x-coordinate of the click
    * @param y the y-coordinate of the click
-   * @return an Action object representing the action to perform, or null if no action is defined
+   * @return an Action object representing the action to perform, or null if no
+   *         action is defined
    */
-  public Action click(int x, int y, double scale) {
+  public List<Action> click(double x, double y) {
     return null;
   }
 
@@ -53,7 +56,6 @@ public class Room {
 
     return valid;
   }
-
 
   public void addNeighbour(Room neighbour) {
     this.linkedTo.addLast(neighbour);
@@ -133,8 +135,9 @@ public class Room {
     if (id != other.id)
       return false;
     if (linkedTo == null) {
-        return other.linkedTo == null;
-    } else return linkedTo.equals(other.linkedTo);
+      return other.linkedTo == null;
+    } else
+      return linkedTo.equals(other.linkedTo);
   }
 
   public static class RoomNotFoundException extends RuntimeException {
