@@ -7,10 +7,10 @@ import items.Item;
  */
 public abstract class Action {
   public static class ChangeRoom extends Action {
-    public final int roomId;
+    public final String roomName;
 
-    public ChangeRoom(int roomId) {
-      this.roomId = roomId;
+    public ChangeRoom(String roomName) {
+      this.roomName = roomName;
     }
   }
 

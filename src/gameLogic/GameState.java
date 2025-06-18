@@ -66,10 +66,13 @@ public class GameState {
   }
 
   public Room getRoom(String name) {
-    return rooms.stream()
-        .filter(room -> room.name.equals(name))
-        .findFirst()
-        .orElseThrow(() -> new IllegalArgumentException("Room not found: " + name));
+    for (Room r : rooms) {
+      if (r != null && r.name.equals(name)) {
+        return r;
+      }
+    }
+
+    throw new IllegalArgumentException("Room " + name + " not found");
   }
 
   public void setCurrentRoom(int roomID) {
@@ -91,15 +94,13 @@ public class GameState {
     switch (action) {
       case Action.ChangeRoom changeRoom -> {
         Room current = getCurrentRoom();
-        System.out.println(current.name);
 
-        Room destination = getRoom(changeRoom.roomId);
-        System.out.println("here");
+        Room destination = getRoom(changeRoom.roomName);
 
         if (current.validMove(destination)) {
           setCurrentRoom(destination.id);
         } else {
-          System.err.println("Invalid move to room: " + changeRoom.roomId);
+          System.err.println("Invalid move to room: " + changeRoom.roomName);
         }
       }
 
