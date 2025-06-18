@@ -35,13 +35,9 @@ public class Rectangle {
    * @return true if the point (x, y) is within the rectangle defined by (rectX,
    *         rectY, rectWidth, rectHeight) after scaling, false otherwise
    */
-  public boolean contains(int x, int y, double scale) {
-    int scaledX = (int) (this.x * scale);
-    int scaledY = (int) (this.y * scale);
-    int scaledWidth = (int) (this.width * scale);
-    int scaledHeight = (int) (this.height * scale);
-    return x >= scaledX && x < scaledX + scaledWidth
-        && y >= scaledY && y < scaledY + scaledHeight;
+  public boolean contains(double x, double y) {
+    return x >= this.x && x < this.x + this.width
+        && y >= this.y && y < this.y + this.height;
   }
 
   /**

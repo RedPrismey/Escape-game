@@ -17,7 +17,7 @@ public class MainRoom extends Room {
     super(name, id);
 
     try {
-      BufferedImage s = ImageIO.read(new File("./rooms/assets/Bridget_Guilty_Gear.png"));
+      BufferedImage s = ImageIO.read(new File("./rooms/assets/machine_room.png"));
       this.setBackground(s);
     } catch (IOException e) {
       System.err.println("Error while loading room background : " + e.getMessage());
@@ -28,7 +28,7 @@ public class MainRoom extends Room {
     super(name, id, linkedTo);
 
     try {
-      BufferedImage s = ImageIO.read(new File("./rooms/assets/Bridget_Guilty_Gear.png"));
+      BufferedImage s = ImageIO.read(new File("./rooms/assets/machine_room.png"));
       this.setBackground(s);
     } catch (IOException e) {
       System.err.println("Error while loading room background : " + e.getMessage());
@@ -41,7 +41,7 @@ public class MainRoom extends Room {
   }
 
   @Override
-  public List<Action> click(int x, int y, double scale) {
+  public List<Action> click(double x, double y) {
     return null;
   }
 

@@ -39,14 +39,14 @@ public class Bedroom extends Room {
   }
 
   @Override
-  public List<Action> click(int x, int y, double scale) {
+  public List<Action> click(double x, double y) {
     // door logic
-    if (doorHitbox.contains(x, y, scale)) {
+    if (doorHitbox.contains(x, y)) {
       return List.of(new Action.ShowHotbarText("Skalala, nous sommes partis!"), new Action.ChangeRoom(1));
     }
 
     // book logic
-    else if (bookHitbox.contains(x, y, scale)) {
+    else if (bookHitbox.contains(x, y)) {
       if (!bookPickedUp) {
         bookPickedUp = true;
 
@@ -59,7 +59,7 @@ public class Bedroom extends Room {
     }
 
     // screen logic
-    else if (screenHitbox.contains(x, y, scale)) {
+    else if (screenHitbox.contains(x, y)) {
       return List.of(
           new Action.ShowHotbarText("Wow un truc avec la console"));
     }

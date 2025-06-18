@@ -33,7 +33,7 @@ public class Room {
    * @return an Action object representing the action to perform, or null if no
    *         action is defined
    */
-  public List<Action> click(int x, int y, double scale) {
+  public List<Action> click(double x, double y) {
     return null;
   }
 
