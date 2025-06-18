@@ -40,7 +40,6 @@ public class UI extends JPanel {
         int panelWidth = getWidth();
         int panelHeight = getHeight();
 
-        // Compute target width/height (your logic)
         int targetWidth = panelWidth;
         int targetHeight = (int) (panelWidth * ASPECT_RATIO_H / (double) ASPECT_RATIO_W);
         if (targetHeight > panelHeight) {
@@ -48,24 +47,15 @@ public class UI extends JPanel {
           targetWidth = (int) (panelHeight * ASPECT_RATIO_W / (double) ASPECT_RATIO_H);
         }
 
-        // Compute offset and scale
         int xOffset = (panelWidth - targetWidth) / 2;
         int yOffset = (panelHeight - targetHeight) / 2;
-        double scale = targetHeight / (double) BASE_HEIGHT;
+        double scale = getScale();
 
-        // Raw mouse coords
         int mouseX = e.getX();
         int mouseY = e.getY();
 
-        // Subtract translation offset (un-centering)
         double sceneX = (mouseX - xOffset) / scale;
         double sceneY = (mouseY - yOffset) / scale;
-
-        // Only react if mouse is inside the scene area
-        if (mouseX >= xOffset && mouseX <= xOffset + targetWidth &&
-            mouseY >= yOffset && mouseY <= yOffset + targetHeight) {
-          System.out.printf("Mouse clicked in scene at: (%.2f, %.2f)\n", sceneX, sceneY);
-        }
 
         if (game.status == GameStatus.PLAYING) {
           List<Action> actions = game.getCurrentRoom().click(sceneX, sceneY);
