@@ -42,7 +42,7 @@ public class Bedroom extends Room {
   public List<Action> click(double x, double y) {
     // door logic
     if (doorHitbox.contains(x, y)) {
-      return List.of(new Action.ShowHotbarText("Skalala, nous sommes partis!"), new Action.ChangeRoom(1));
+      return List.of(new Action.ShowHotbarText("Skalala, nous sommes partis!"), new Action.ChangeRoom("Main room"));
     }
 
     // book logic

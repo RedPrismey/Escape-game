@@ -141,6 +141,7 @@ public class UI extends JPanel {
     int panelWidth = getWidth();
     int panelHeight = getHeight();
     int targetHeight = (int) (panelWidth * ASPECT_RATIO_H / (double) ASPECT_RATIO_W);
+
     if (targetHeight > panelHeight) {
       targetHeight = panelHeight;
     }

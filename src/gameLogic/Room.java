@@ -19,6 +19,7 @@ public class Room {
   }
 
   public Room(String name, int id, List<Room> linkedTo) {
+    this.name = name;
     this.id = id;
     this.linkedTo = linkedTo;
   }
