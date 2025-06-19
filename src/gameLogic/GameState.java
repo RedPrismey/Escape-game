@@ -10,7 +10,7 @@ import java.util.List;
  * It also manages the countdown timer for the game.
  */
 public class GameState {
-  private static final int TIMER_DURATION = 300;
+  private static final int TIMER_DURATION = 1800;
 
   public GameStatus status = GameStatus.PLAYING;
 

@@ -49,11 +49,6 @@ public class MainRoom extends Room {
   @Override
   public void draw(Graphics2D g, int width, int height) {
     super.draw(g, width, height);
-
-    screenHitbox.draw(g);
-    keyHitbox.draw(g);
-    chestHitbox.draw(g);
-    doorHitbox.draw(g);
   }
 
   @Override
