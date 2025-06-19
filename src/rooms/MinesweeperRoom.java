@@ -4,15 +4,19 @@ import gameLogic.Action;
 import gameLogic.Room;
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
 public class MinesweeperRoom extends Room {
-    private final int rows = 8;
-    private final int cols = 8;
-    private final int totalMines = 13;
+    private static final int rows = 8;
+    private static final int cols = 8;
+    private static final int totalMines = 13;
+
+    private boolean lost = false;
+    private boolean won = false;
 
     private boolean[][] bombs = new boolean[rows][cols];
     private boolean[][] flags = new boolean[rows][cols];
@@ -22,25 +26,32 @@ public class MinesweeperRoom extends Room {
     private int hoveredRow = -1;
     private int hoveredCol = -1;
 
-    private final int cellSize = 80;
+    private static final int cellSize = 90;
 
     private double hoveredSceneX = -1;
     private double hoveredSceneY = -1;
 
-    public MinesweeperRoom(String name, int id) {
-        super(name, id);
-        initGame();
-
-        try {
-            BufferedImage bg = javax.imageio.ImageIO.read(new java.io.File("./rooms/assets/minesweeper_background.png"));
-            this.setBackground(bg);
-        } catch (IOException e) {
-            System.err.println("Error loading Minesweeper background: " + e.getMessage());
-        }
-    }
+    BufferedImage flagSprite;
+    BufferedImage bombSprite;
 
     public MinesweeperRoom(String name, int id, List<Room> linkedTo) {
         super(name, id, linkedTo);
+
+        try {
+            setBackground(javax.imageio.ImageIO.read(new File("./rooms/assets/screen1.png")));
+        } catch (IOException e) {
+            System.err.println("Error loading background image: " + e.getMessage());
+        }
+        try {
+            flagSprite = javax.imageio.ImageIO.read(new File("./rooms/assets/flag.png"));
+        } catch (IOException e) {
+            System.err.println("Error loading flag sprite: " + e.getMessage());
+        }
+        try {
+            bombSprite = javax.imageio.ImageIO.read(new File("./rooms/assets/bomb.png"));
+        } catch (IOException e) {
+            System.err.println("Error loading bomb sprite: " + e.getMessage());
+        }
 
         initGame();
     }
@@ -94,8 +105,8 @@ public class MinesweeperRoom extends Room {
             this.cellSize = cellSize;
             this.gridWidth = cols * cellSize;
             this.gridHeight = rows * cellSize;
-            this.startX = (sceneWidth - gridWidth) / 2;
-            this.startY = (sceneHeight - gridHeight) / 2;
+            this.startX = (sceneWidth - gridWidth) / 2 - 90;
+            this.startY = (sceneHeight - gridHeight) / 2 - 10;
         }
 
         int col(double x) {
@@ -126,7 +137,7 @@ public class MinesweeperRoom extends Room {
                 if (r == hoveredRow && c == hoveredCol) {
                     g.setColor(Color.LIGHT_GRAY);
                 } else {
-                    g.setColor(Color.GRAY);
+                    g.setColor(new Color(180, 180, 180));
                 }
                 g.fillRect(x, y, cellSize, cellSize);
 
@@ -137,8 +148,23 @@ public class MinesweeperRoom extends Room {
                 // Revealed cell
                 if (revealed[r][c]) {
                     if (bombs[r][c]) {
-                        g.setColor(Color.RED);
-                        g.fillOval(x+10, y+10, cellSize-20, cellSize-20);
+                        if (bombSprite != null) {
+                            g.drawImage(
+                                bombSprite,
+                                x + 1,
+                                y + 1,
+                                x + cellSize,
+                                y + cellSize,
+                                0,
+                                0,
+                                bombSprite.getWidth(),
+                                bombSprite.getHeight(),
+                                null
+                            );
+                        } else {
+                            g.setColor(Color.RED);
+                            g.fillOval(x+10, y+10, cellSize-20, cellSize-20);
+                        }
                     } else {
                         g.setColor(Color.WHITE);
                         g.fillRect(x+1, y+1, cellSize-2, cellSize-2);
@@ -156,9 +182,35 @@ public class MinesweeperRoom extends Room {
                 }
                 // Flagged cell
                 else if (flags[r][c]) {
-                    g.setColor(Color.RED);
-                    g.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 28));
-                    g.drawString("🚩", x + cellSize/4, y + 3*cellSize/4);
+                    if (flagSprite != null) {
+                        g.drawImage(
+                            flagSprite,
+                            x + 1,
+                            y + 1,
+                            x + cellSize,
+                            y + cellSize,
+                            0,
+                            0,
+                            flagSprite.getWidth(),
+                            flagSprite.getHeight(),
+                            null
+                        );
+                    } else {
+                        // Draws a triangle
+                        g.setColor(Color.RED);
+                        int margin = cellSize / 5;
+                        int[] xPoints = {
+                            x + cellSize / 2,
+                            x + margin,
+                            x + cellSize - margin
+                        };
+                        int[] yPoints = {
+                            y + margin,
+                            y + cellSize - margin,
+                            y + cellSize - margin
+                        };
+                        g.fillPolygon(xPoints, yPoints, 3);
+                    }
                 }
             }
         }
@@ -167,6 +219,13 @@ public class MinesweeperRoom extends Room {
     @Override
     public List<Action> click(double x, double y) {
         List<Action> resultActions = new ArrayList<>();
+
+        if (lost) {
+            initGame();
+            lost = false;
+            won = false;
+            return List.of(new Action.ShowHotbarText("Partie réinitialisée."));
+        }
 
         GridTransform t = new GridTransform(rows, cols, cellSize, 1920, 980);
         int col = t.col(x);
@@ -182,10 +241,10 @@ public class MinesweeperRoom extends Room {
         revealed[row][col] = true;
 
         if (bombs[row][col]) {
-            // Bombe cliquée = game lost
+            lost = true;
+            won = false;
             return List.of(
-                new Action.ShowHotbarText("BOOM! Vous avez perdu."),
-                new Action.ChangeRoom("Bedroom")
+                new Action.ShowHotbarText("BOOM! Vous avez perdu.\nCliquez pour recommencer.")
             );
         } else {
             if (adjacentCounts[row][col] == 0) {
@@ -195,8 +254,10 @@ public class MinesweeperRoom extends Room {
         }
 
         if (checkWin()) {
-            resultActions.add(new Action.ShowHotbarText("Bravo, vous avez gagné !"));
+            won = true;
+            resultActions.add(new Action.ShowHotbarText("Bravo, vous avez gagné !\nLa porte est ouverte."));
             resultActions.add(new Action.ChangeRoom("Bedroom"));
+            resultActions.add(new Action.MinesweeperWon());
         }
 
         hoveredRow = row;
@@ -273,21 +334,5 @@ public class MinesweeperRoom extends Room {
     
     public double getHoveredSceneY() {
         return hoveredSceneY;
-    }
-    public void resetGame() {
-        initGame(); // Réinitialise les bombes, drapeaux, etc.
-        hoveredRow = -1;
-        hoveredCol = -1;
-    }
-    public int getRemainingFlags() {
-        int count = 0;
-        for (boolean[] flag : flags) {
-            for (int c = 0; c < flags[0].length; c++) {
-                if (flag[c]) {
-                    count++;
-                }
-            }
-        }
-        return totalMines - count;
     }
 }

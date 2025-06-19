@@ -128,6 +128,9 @@ public class GameState {
         this.hotbarTextExpireAt = System.currentTimeMillis() + 5000;
       }
 
+      case Action.MinesweeperWon mw -> {
+        getCurrentRoom().handleAction(mw);
+      }
       case null, default -> {
       }
     }

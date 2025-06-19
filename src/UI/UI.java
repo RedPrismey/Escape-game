@@ -86,14 +86,12 @@ public class UI extends JPanel {
         }
     });
 
-    // Key listener pour poser/enlever drapeaux avec la touche A (par exemple)
     addKeyListener(new java.awt.event.KeyAdapter() {
       @Override
       public void keyPressed(java.awt.event.KeyEvent e) {
-        System.out.println("Key pressed: " + e.getKeyCode());
         if (e.getKeyCode() == java.awt.event.KeyEvent.VK_A) {
           if (game.getCurrentRoom() instanceof rooms.MinesweeperRoom msRoom) {
-            // Pose/enlève drapeau sur la case survolée (implémente la méthode flagAt dans MinesweeperRoom)
+
             double hoverX = msRoom.getHoveredSceneX();
             double hoverY = msRoom.getHoveredSceneY();
             List<Action> actions = msRoom.flagAt(hoverX, hoverY);
@@ -145,7 +143,14 @@ public class UI extends JPanel {
     int x = 700;
     int y = HOTBAR_Y + (HOTBAR_HEIGHT + fm.getAscent()) / 2 - 10;
 
-    g.drawString(text, x, y);
+    String[] lines = text.split("\n");
+    int lineHeight = fm.getHeight();
+    int totalHeight = lines.length * lineHeight;
+    int startY = HOTBAR_Y + (HOTBAR_HEIGHT - totalHeight) / 2 + fm.getAscent();
+
+    for (int i = 0; i < lines.length; i++) {
+      g.drawString(lines[i], x, startY + i * lineHeight);
+    }
   }
 
   private void drawGameOver(Graphics2D g2) {
