@@ -1,12 +1,9 @@
-import java.awt.EventQueue;
-
-import java.util.List;
-
-import javax.swing.JFrame;
-
 import UI.UI;
 import gameLogic.*;
 import items.*;
+import java.awt.EventQueue;
+import java.util.List;
+import javax.swing.JFrame;
 import rooms.*;
 
 public class Game {
@@ -17,17 +14,20 @@ public class Game {
     Inventory inv = new Inventory();
 
     Bedroom bedroom = new Bedroom("Bedroom", 0);
+    MinesweeperRoom mineRoom = new MinesweeperRoom("Mine Room", 1, List.of(bedroom));
+    bedroom.addNeighbour(mineRoom);
+    Book book = new Book("Book", 2, List.of(bedroom));
+    bedroom.addNeighbour(book);
 
-    MainRoom mainRoom = new MainRoom("Main room", 1, List.of(bedroom));
+    MainRoom mainRoom = new MainRoom("Main Room", 3, List.of(bedroom));
     bedroom.addNeighbour(mainRoom);
 
-    GameState game = new GameState(0, List.of(bedroom, mainRoom), inv);
+    GameState game = new GameState(0, List.of(bedroom, mainRoom, mineRoom), inv);
 
     EventQueue.invokeLater(() -> {
       UI ui = new UI(game);
       frame.setContentPane(ui);
 
-      // Fullscreen
       java.awt.GraphicsEnvironment graphics = java.awt.GraphicsEnvironment.getLocalGraphicsEnvironment();
       java.awt.GraphicsDevice device = graphics.getDefaultScreenDevice();
       device.setFullScreenWindow(frame);

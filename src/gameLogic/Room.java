@@ -39,6 +39,15 @@ public class Room {
   }
 
   /**
+   * Allows the room to handle hover events.
+   * This method can be overridden by subclasses to provide specific behavior
+   *
+   * @param x the x-coordinate of the hover
+   * @param y the y-coordinate of the hover
+   */
+  public void hover(double x, double y) {}
+
+  /**
    * Tells if the move from the current room to the `destination` room is valid
    *
    * @param destination the room to which the player wants to move

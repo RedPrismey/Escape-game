@@ -1,8 +1,7 @@
 package gameLogic;
 
-import java.util.List;
-
 import items.Inventory;
+import java.util.List;
 
 /**
  * The GameState class represents the current state of the game.
@@ -40,7 +39,7 @@ public class GameState {
     countdown.start();
   }
 
-  public GameStatus update() {
+  public void update() {
     countdown.update();
 
     if (hotbarText != null && System.currentTimeMillis() > hotbarTextExpireAt) {
@@ -50,19 +49,26 @@ public class GameState {
     if (countdown.getSecondsLeft() <= 0) {
       status = GameStatus.LOST;
     }
-
-    return status;
   }
 
   public Room getCurrentRoom() {
-    return rooms.get(currentRoomID);
+    // Recherche la pièce dont l'id correspond à currentRoomID
+    for (Room room : rooms) {
+      if (room != null && room.id == currentRoomID) {
+        return room;
+      }
+    }
+    throw new IllegalStateException("Current room ID does not match any room.");
   }
 
   public Room getRoom(int roomID) {
-    if (roomID >= 0 && roomID < rooms.size()) {
-      return rooms.get(roomID);
+    // Recherche la pièce dont l'id correspond à roomID
+    for (Room room : rooms) {
+      if (room != null && room.id == roomID) {
+        return room;
+      }
     }
-    throw new IndexOutOfBoundsException("Invalid room ID: " + roomID);
+    throw new IllegalArgumentException("Invalid room ID: " + roomID);
   }
 
   public Room getRoom(String name) {
@@ -76,9 +82,14 @@ public class GameState {
   }
 
   public void setCurrentRoom(int roomID) {
-    if (roomID >= 0 && roomID < rooms.size()) {
-      this.currentRoomID = roomID;
+    // Vérifie que la pièce existe bien dans la liste rooms
+    for (Room room : rooms) {
+      if (room != null && room.id == roomID) {
+        this.currentRoomID = roomID;
+        return;
+      }
     }
+    throw new IllegalArgumentException("Room ID not found in rooms list: " + roomID);
   }
 
   public void executeAction(List<Action> actions) {
@@ -89,33 +100,32 @@ public class GameState {
     }
   }
 
-  // private method that is executed for each individual action
   private void executeAction(Action action) {
     switch (action) {
-      case Action.ChangeRoom changeRoom -> {
+      case Action.ChangeRoom room -> {
         Room current = getCurrentRoom();
-
-        Room destination = getRoom(changeRoom.roomName);
+        Room destination = getRoom(room.roomName);
 
         if (current.validMove(destination)) {
+          System.out.println(destination.id + " moved");
           setCurrentRoom(destination.id);
         } else {
-          System.err.println("Invalid move to room: " + changeRoom.roomName);
+          System.err.println("Invalid move to room: " + room.roomName);
         }
       }
 
-      case Action.CollectItem addItem -> {
+      case Action.CollectItem item -> {
         if (!inventory.isFull()) {
-          inventory.addItem(addItem.item);
+          inventory.addItem(item.item);
         } else {
           System.err.println("Inventory full");
         }
 
       }
 
-      case Action.ShowHotbarText showText -> {
-        this.hotbarText = showText.text;
-        this.hotbarTextExpireAt = System.currentTimeMillis() + 5000; // 5 secondes
+      case Action.ShowHotbarText text -> {
+        this.hotbarText = text.text;
+        this.hotbarTextExpireAt = System.currentTimeMillis() + 5000;
       }
 
       case null, default -> {

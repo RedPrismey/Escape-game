@@ -27,35 +27,44 @@ public class UI extends JPanel {
 
   private static final int COUNTDOWN_WIDTH = 180;
 
+  // For handling scene to screen transformations
+  private static class SceneTransform {
+    final int xOffset, yOffset;
+    final double scale;
+
+    SceneTransform(int panelWidth, int panelHeight) {
+      int targetWidth = panelWidth;
+      int targetHeight = (int) (panelWidth * ASPECT_RATIO_H / (double) ASPECT_RATIO_W);
+      if (targetHeight > panelHeight) {
+        targetHeight = panelHeight;
+        targetWidth = (int) (panelHeight * ASPECT_RATIO_W / (double) ASPECT_RATIO_H);
+      }
+      this.xOffset = (panelWidth - targetWidth) / 2;
+      this.yOffset = (panelHeight - targetHeight) / 2;
+      this.scale = targetHeight / (double) BASE_HEIGHT;
+    }
+
+    double sceneX(int mouseX) {
+      return (mouseX - xOffset) / scale;
+    }
+
+    double sceneY(int mouseY) {
+      return (mouseY - yOffset) / scale;
+    }
+  }
+
   public UI(GameState gameState) {
     this.game = gameState;
 
     // repaint regularly to update the countdown
     new Timer(200, _ -> repaint()).start();
 
-    // for mouse events
     addMouseListener(new java.awt.event.MouseAdapter() {
       @Override
       public void mouseClicked(java.awt.event.MouseEvent e) {
-        int panelWidth = getWidth();
-        int panelHeight = getHeight();
-
-        int targetWidth = panelWidth;
-        int targetHeight = (int) (panelWidth * ASPECT_RATIO_H / (double) ASPECT_RATIO_W);
-        if (targetHeight > panelHeight) {
-          targetHeight = panelHeight;
-          targetWidth = (int) (panelHeight * ASPECT_RATIO_W / (double) ASPECT_RATIO_H);
-        }
-
-        int xOffset = (panelWidth - targetWidth) / 2;
-        int yOffset = (panelHeight - targetHeight) / 2;
-        double scale = getScale();
-
-        int mouseX = e.getX();
-        int mouseY = e.getY();
-
-        double sceneX = (mouseX - xOffset) / scale;
-        double sceneY = (mouseY - yOffset) / scale;
+        SceneTransform t = new SceneTransform(getWidth(), getHeight());
+        double sceneX = t.sceneX(e.getX());
+        double sceneY = t.sceneY(e.getY());
 
         if (game.status == GameStatus.PLAYING) {
           List<Action> actions = game.getCurrentRoom().click(sceneX, sceneY);
@@ -64,6 +73,39 @@ public class UI extends JPanel {
         }
       }
     });
+
+    addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
+      @Override
+      public void mouseMoved(java.awt.event.MouseEvent e) {
+        SceneTransform t = new SceneTransform(getWidth(), getHeight());
+        double sceneX = t.sceneX(e.getX());
+        double sceneY = t.sceneY(e.getY());
+
+          game.getCurrentRoom().hover(sceneX, sceneY);
+          repaint();
+        }
+    });
+
+    // Key listener pour poser/enlever drapeaux avec la touche A (par exemple)
+    addKeyListener(new java.awt.event.KeyAdapter() {
+      @Override
+      public void keyPressed(java.awt.event.KeyEvent e) {
+        System.out.println("Key pressed: " + e.getKeyCode());
+        if (e.getKeyCode() == java.awt.event.KeyEvent.VK_A) {
+          if (game.getCurrentRoom() instanceof rooms.MinesweeperRoom msRoom) {
+            // Pose/enlève drapeau sur la case survolée (implémente la méthode flagAt dans MinesweeperRoom)
+            double hoverX = msRoom.getHoveredSceneX();
+            double hoverY = msRoom.getHoveredSceneY();
+            List<Action> actions = msRoom.flagAt(hoverX, hoverY);
+            game.executeAction(actions);
+            repaint();
+          }
+        }
+      }
+    });
+
+    setFocusable(true);
+    requestFocusInWindow();
   }
 
   @Override
