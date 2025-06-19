@@ -29,8 +29,10 @@ public abstract class Action {
       this.text = text;
     }
   }
-
   public static class MinesweeperWon extends Action {
     public MinesweeperWon() {}
+  }
+  public static class PasswordValidated extends Action {
+    public PasswordValidated() {}
   }
 }

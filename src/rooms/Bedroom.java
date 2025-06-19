@@ -3,7 +3,7 @@ package rooms;
 import gameLogic.Action;
 import gameLogic.Rectangle;
 import gameLogic.Room;
-import items.Cle;
+
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -11,8 +11,8 @@ import java.util.List;
 import javax.imageio.ImageIO;
 
 public class Bedroom extends Room {
-  private boolean bookPickedUp = false;
-  private boolean minesweeperDoorOpen = false;
+  private boolean minesweeperSolved = true;
+  private boolean passwordValidated = false;
 
   private static final Rectangle doorHitbox = new Rectangle(928, 151, 536, 600);
   private static final Rectangle bookHitbox = new Rectangle(672, 600, 180, 40);
@@ -42,30 +42,31 @@ public class Bedroom extends Room {
   public List<Action> click(double x, double y) {
     // door logic
     if (doorHitbox.contains(x, y)) {
-      if (minesweeperDoorOpen) {
+      if (minesweeperSolved) {
         return List.of(new Action.ShowHotbarText("Skalala, nous sommes partis!"), new Action.ChangeRoom("Main Room"));
-      } else {
+      } else if (!passwordValidated) {
         return List.of(new Action.ShowHotbarText("La porte est verouillée"));
+      } else {
+        return List.of(new Action.ShowHotbarText("Bizarre, la porte est encore fermée.\nJe devrais peut-être revérifier la console"));
       }
     }
 
     // book logic
     else if (bookHitbox.contains(x, y)) {
-      if (!bookPickedUp) {
-        bookPickedUp = true;
-
         return List.of(
-            new Action.ShowHotbarText("Vous avez ramassé le livre."),
-            new Action.CollectItem(new Cle()));
-      } else {
-        return List.of(new Action.ShowHotbarText("Vous avez déjà ramassé le livre"));
-      }
+            new Action.ShowHotbarText("Vous lisez le livre"),
+            new Action.ChangeRoom("Book Room"));
+
     }
 
     // screen logic
     else if (screenHitbox.contains(x, y)) {
-      return List.of(
-          new Action.ShowHotbarText("Wow un truc avec la console"), new Action.ChangeRoom("Mine Room"));
+      if (!passwordValidated) {
+        return List.of(new Action.ChangeRoom("Password Room"), new Action.ShowHotbarText("Tiens, une console"));
+      } else {
+        return List.of(
+                new Action.ShowHotbarText("? Pourquoi est-ce qu'il y a un démineur ?"), new Action.ChangeRoom("Mine Room"));
+      }
     }
 
     return List.of();
@@ -74,7 +75,9 @@ public class Bedroom extends Room {
   @Override
   public void handleAction(Action action) {
     if (action instanceof Action.MinesweeperWon) {
-      this.minesweeperDoorOpen = true;
+      this.minesweeperSolved = true;
+    } else if (action instanceof Action.PasswordValidated) {
+      this.passwordValidated = true;
     }
     super.handleAction(action);
   }

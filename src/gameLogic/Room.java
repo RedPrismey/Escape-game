@@ -136,6 +136,11 @@ public class Room {
     }
   }
 
+
+  public List<Action> handleKeyPressed(java.awt.event.KeyEvent e) {
+    return null;
+  }
+
   @Override
   public boolean equals(Object obj) {
     if (this == obj)
