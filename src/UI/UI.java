@@ -3,6 +3,7 @@ package UI;
 import gameLogic.Action;
 import gameLogic.GameState;
 import gameLogic.GameStatus;
+
 import java.awt.*;
 import java.util.List;
 import javax.swing.*;
@@ -54,7 +55,7 @@ public class UI extends JPanel {
 
   public UI(GameState gameState) {
     this.game = gameState;
-  
+
     // repaint regularly to update the countdown
     new Timer(200, _ -> repaint()).start();
 
@@ -182,6 +183,7 @@ public class UI extends JPanel {
     int panelWidth = getWidth();
     int panelHeight = getHeight();
     int targetHeight = (int) (panelWidth * ASPECT_RATIO_H / (double) ASPECT_RATIO_W);
+
     if (targetHeight > panelHeight) {
       targetHeight = panelHeight;
     }
@@ -210,13 +212,16 @@ public class UI extends JPanel {
     int xOffset = (panelWidth - targetWidth) / 2;
     int yOffset = (panelHeight - targetHeight) / 2;
 
+    // black background in case screen is not 16:9
     g.setColor(Color.BLACK);
     g.fillRect(0, 0, panelWidth, panelHeight);
 
+    // to translate in 19:9
     Graphics2D g2 = (Graphics2D) g.create();
     g2.translate(xOffset, yOffset);
     g2.setClip(0, 0, targetWidth, targetHeight);
 
+    // Scaling
     double scale = targetHeight / (double) BASE_HEIGHT;
     g2.scale(scale, scale);
 

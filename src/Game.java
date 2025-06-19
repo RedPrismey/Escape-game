@@ -14,6 +14,7 @@ public class Game {
     Inventory inv = new Inventory();
 
     Bedroom bedroom = new Bedroom("Bedroom", 0);
+
     MainRoom mainRoom = new MainRoom("Main room", 1, List.of(bedroom));
     MinesweeperRoom mineRoom = new MinesweeperRoom("Mine Room", 2, List.of(bedroom));
     bedroom.addNeighbour(mainRoom);
