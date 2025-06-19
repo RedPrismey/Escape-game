@@ -4,9 +4,9 @@ import gameLogic.Action;
 import gameLogic.GameState;
 import gameLogic.GameStatus;
 
+import javax.swing.*;
 import java.awt.*;
 import java.util.List;
-import javax.swing.*;
 
 /**
  * The UI class is responsible for rendering the game interface.
@@ -202,6 +202,7 @@ public class UI extends JPanel {
     int panelWidth = getWidth();
     int panelHeight = getHeight();
 
+    // for the aspect ratio 16:9
     int targetWidth = panelWidth;
     int targetHeight = (int) (panelWidth * ASPECT_RATIO_H / (double) ASPECT_RATIO_W);
     if (targetHeight > panelHeight) {

@@ -137,12 +137,8 @@ public class MinesweeperRoom extends Room {
                 // Revealed cell
                 if (revealed[r][c]) {
                     if (bombs[r][c]) {
-                        if (bombImage != null) {
-                            g.drawImage(bombImage, x+10, y+10, cellSize-20, cellSize-20, null);
-                        } else {
-                            g.setColor(Color.RED);
-                            g.fillOval(x+10, y+10, cellSize-20, cellSize-20);
-                        }
+                        g.setColor(Color.RED);
+                        g.fillOval(x+10, y+10, cellSize-20, cellSize-20);
                     } else {
                         g.setColor(Color.WHITE);
                         g.fillRect(x+1, y+1, cellSize-2, cellSize-2);
@@ -189,7 +185,7 @@ public class MinesweeperRoom extends Room {
             // Bombe cliquée = game lost
             return List.of(
                 new Action.ShowHotbarText("BOOM! Vous avez perdu."),
-                new Action.ChangeRoom(0) // TODO: change
+                new Action.ChangeRoom("Bedroom")
             );
         } else {
             if (adjacentCounts[row][col] == 0) {
@@ -200,7 +196,7 @@ public class MinesweeperRoom extends Room {
 
         if (checkWin()) {
             resultActions.add(new Action.ShowHotbarText("Bravo, vous avez gagné !"));
-            resultActions.add(new Action.ChangeRoom(0)); //TODO: change
+            resultActions.add(new Action.ChangeRoom("Bedroom"));
         }
 
         hoveredRow = row;

@@ -41,7 +41,7 @@ public class Bedroom extends Room {
   public List<Action> click(double x, double y) {
     // door logic
     if (doorHitbox.contains(x, y)) {
-      return List.of(new Action.ShowHotbarText("Skalala, nous sommes partis!"), new Action.ChangeRoom("Main room"));
+      return List.of(new Action.ShowHotbarText("Skalala, nous sommes partis!"), new Action.ChangeRoom("Main Room"));
     }
 
     // book logic
@@ -60,7 +60,7 @@ public class Bedroom extends Room {
     // screen logic
     else if (screenHitbox.contains(x, y)) {
       return List.of(
-          new Action.ShowHotbarText("Wow un truc avec la console"),new Action.ChangeRoom(2));
+          new Action.ShowHotbarText("Wow un truc avec la console"), new Action.ChangeRoom("Mine Room"));
     }
 
     return List.of();

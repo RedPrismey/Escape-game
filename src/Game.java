@@ -14,13 +14,15 @@ public class Game {
     Inventory inv = new Inventory();
 
     Bedroom bedroom = new Bedroom("Bedroom", 0);
-
-    MainRoom mainRoom = new MainRoom("Main room", 1, List.of(bedroom));
-    MinesweeperRoom mineRoom = new MinesweeperRoom("Mine Room", 2, List.of(bedroom));
-    bedroom.addNeighbour(mainRoom);
+    MinesweeperRoom mineRoom = new MinesweeperRoom("Mine Room", 1, List.of(bedroom));
     bedroom.addNeighbour(mineRoom);
+    Book book = new Book("Book", 2, List.of(bedroom));
+    bedroom.addNeighbour(book);
 
-    GameState game = new GameState(0, List.of(bedroom, mainRoom,mineRoom), inv);
+    MainRoom mainRoom = new MainRoom("Main Room", 3, List.of(bedroom));
+    bedroom.addNeighbour(mainRoom);
+
+    GameState game = new GameState(0, List.of(bedroom, mainRoom, mineRoom), inv);
 
     EventQueue.invokeLater(() -> {
       UI ui = new UI(game);
