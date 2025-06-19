@@ -38,7 +38,7 @@ public class MinesweeperRoom extends Room {
         super(name, id, linkedTo);
 
         try {
-            setBackground(javax.imageio.ImageIO.read(new File("./rooms/assets/screen1.png")));
+            setBackground(javax.imageio.ImageIO.read(new File("rooms/assets/screen.png")));
         } catch (IOException e) {
             System.err.println("Error loading background image: " + e.getMessage());
         }
@@ -250,7 +250,6 @@ public class MinesweeperRoom extends Room {
             if (adjacentCounts[row][col] == 0) {
                 revealNeighbors(row, col);
             }
-            resultActions.add(new Action.ShowHotbarText("Case révélée."));
         }
 
         if (checkWin()) {
@@ -313,6 +312,18 @@ public class MinesweeperRoom extends Room {
             hoveredSceneX = -1;
             hoveredSceneY = -1;
         }
+    }
+
+    @Override
+    public List<Action> handleKeyPressed(java.awt.event.KeyEvent e) {
+        if (e.getKeyCode() == java.awt.event.KeyEvent.VK_A) {
+            double hoverX = getHoveredSceneX();
+            double hoverY = getHoveredSceneY();
+
+            return flagAt(hoverX, hoverY);
+        }
+
+        return null;
     }
 
     private boolean isValidCell(int r, int c) {

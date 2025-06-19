@@ -89,16 +89,9 @@ public class UI extends JPanel {
     addKeyListener(new java.awt.event.KeyAdapter() {
       @Override
       public void keyPressed(java.awt.event.KeyEvent e) {
-        if (e.getKeyCode() == java.awt.event.KeyEvent.VK_A) {
-          if (game.getCurrentRoom() instanceof rooms.MinesweeperRoom msRoom) {
-
-            double hoverX = msRoom.getHoveredSceneX();
-            double hoverY = msRoom.getHoveredSceneY();
-            List<Action> actions = msRoom.flagAt(hoverX, hoverY);
-            game.executeAction(actions);
-            repaint();
-          }
-        }
+        List<Action> actions = game.getCurrentRoom().handleKeyPressed(e);
+        game.executeAction(actions);
+        repaint();
       }
     });
 

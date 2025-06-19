@@ -11,18 +11,7 @@ public class Game {
     JFrame frame = new JFrame("Escape Game 2000");
     frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-    Inventory inv = new Inventory();
-
-    Bedroom bedroom = new Bedroom("Bedroom", 0);
-    MinesweeperRoom mineRoom = new MinesweeperRoom("Mine Room", 1, List.of(bedroom));
-    bedroom.addNeighbour(mineRoom);
-    Book bookRoom = new Book("Book Room", 2, List.of(bedroom));
-    bedroom.addNeighbour(bookRoom);
-
-    MainRoom mainRoom = new MainRoom("Main Room", 3, List.of(bedroom));
-    bedroom.addNeighbour(mainRoom);
-
-    GameState game = new GameState(0, List.of(bedroom, mineRoom, bookRoom, mainRoom), inv);
+    GameState game = getGameState();
 
     EventQueue.invokeLater(() -> {
       UI ui = new UI(game);
@@ -34,5 +23,23 @@ public class Game {
 
       frame.setVisible(true);
     });
+  }
+
+  private static GameState getGameState() {
+    Inventory inv = new Inventory();
+
+    Bedroom bedroom = new Bedroom("Bedroom", 0);
+
+    Book bookRoom = new Book("Book Room", 1, List.of(bedroom));
+    bedroom.addNeighbour(bookRoom);
+    PasswordValidationRoom passwordRoom = new PasswordValidationRoom("Password Room", 2, List.of(bedroom));
+    bedroom.addNeighbour(passwordRoom);
+    MinesweeperRoom mineRoom = new MinesweeperRoom("Mine Room", 3, List.of(bedroom));
+    bedroom.addNeighbour(mineRoom);
+
+    MainRoom mainRoom = new MainRoom("Main Room", 4, List.of(bedroom));
+    bedroom.addNeighbour(mainRoom);
+
+    return new GameState(0, List.of(bedroom, mineRoom, bookRoom, passwordRoom, mainRoom), inv);
   }
 }
