@@ -19,6 +19,7 @@ public class Room {
   }
 
   public Room(String name, int id, List<Room> linkedTo) {
+    this.name = name;
     this.id = id;
     this.linkedTo = linkedTo;
   }
@@ -36,6 +37,15 @@ public class Room {
   public List<Action> click(double x, double y) {
     return null;
   }
+
+  /**
+   * Allows the room to handle hover events.
+   * This method can be overridden by subclasses to provide specific behavior
+   *
+   * @param x the x-coordinate of the hover
+   * @param y the y-coordinate of the hover
+   */
+  public void hover(double x, double y) {}
 
   /**
    * Tells if the move from the current room to the `destination` room is valid

@@ -26,88 +26,63 @@ public class UI extends JPanel {
 
   private static final int COUNTDOWN_WIDTH = 180;
 
+  // For handling scene to screen transformations
+  private static class SceneTransform {
+    final int xOffset, yOffset;
+    final double scale;
+
+    SceneTransform(int panelWidth, int panelHeight) {
+      int targetWidth = panelWidth;
+      int targetHeight = (int) (panelWidth * ASPECT_RATIO_H / (double) ASPECT_RATIO_W);
+      if (targetHeight > panelHeight) {
+        targetHeight = panelHeight;
+        targetWidth = (int) (panelHeight * ASPECT_RATIO_W / (double) ASPECT_RATIO_H);
+      }
+      this.xOffset = (panelWidth - targetWidth) / 2;
+      this.yOffset = (panelHeight - targetHeight) / 2;
+      this.scale = targetHeight / (double) BASE_HEIGHT;
+    }
+
+    double sceneX(int mouseX) {
+      return (mouseX - xOffset) / scale;
+    }
+
+    double sceneY(int mouseY) {
+      return (mouseY - yOffset) / scale;
+    }
+  }
+
   public UI(GameState gameState) {
     this.game = gameState;
   
     // repaint regularly to update the countdown
     new Timer(200, _ -> repaint()).start();
 
-    // Mouse listener fusionné qui gère MinesweeperRoom en priorité
     addMouseListener(new java.awt.event.MouseAdapter() {
       @Override
       public void mouseClicked(java.awt.event.MouseEvent e) {
-        int panelWidth = getWidth();
-        int panelHeight = getHeight();
+        SceneTransform t = new SceneTransform(getWidth(), getHeight());
+        double sceneX = t.sceneX(e.getX());
+        double sceneY = t.sceneY(e.getY());
 
-        // Compute target width/height (your logic)
-        int targetWidth = panelWidth;
-        int targetHeight = (int) (panelWidth * ASPECT_RATIO_H / (double) ASPECT_RATIO_W);
-        if (targetHeight > panelHeight) {
-          targetHeight = panelHeight;
-          targetWidth = (int) (panelHeight * ASPECT_RATIO_W / (double) ASPECT_RATIO_H);
-        }
-
-        // Compute offset and scale
-        int xOffset = (panelWidth - targetWidth) / 2;
-        int yOffset = (panelHeight - targetHeight) / 2;
-        double scale = targetHeight / (double) BASE_HEIGHT;
-
-        int mouseX = e.getX();
-        int mouseY = e.getY();
-
-        if (mouseX >= xOffset && mouseX <= xOffset + targetWidth &&
-            mouseY >= yOffset && mouseY <= yOffset + targetHeight) {
-
-          double sceneX = (mouseX - xOffset) / scale;
-          double sceneY = (mouseY - yOffset) / scale;
-
-          if (game.getCurrentRoom() instanceof rooms.MinesweeperRoom msRoom) {
-            // Appelle la méthode click spécifique qui renvoie une liste d'actions
-            List<Action> actions = msRoom.click(sceneX, sceneY);
-            game.executeAction(actions);
-            repaint();
-          } else if (game.status == GameStatus.PLAYING) {
-            List<Action> actions = game.getCurrentRoom().click(sceneX, sceneY);
-            game.executeAction(actions);
-            repaint();
-          }
+        if (game.status == GameStatus.PLAYING) {
+          List<Action> actions = game.getCurrentRoom().click(sceneX, sceneY);
+          game.executeAction(actions);
+          repaint();
         }
       }
     });
 
-    // Ajoute le listener pour le mouvement souris (hover)
     addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
       @Override
       public void mouseMoved(java.awt.event.MouseEvent e) {
-        int panelWidth = getWidth();
-        int panelHeight = getHeight();
+        SceneTransform t = new SceneTransform(getWidth(), getHeight());
+        double sceneX = t.sceneX(e.getX());
+        double sceneY = t.sceneY(e.getY());
 
-        int targetWidth = panelWidth;
-        int targetHeight = (int) (panelWidth * ASPECT_RATIO_H / (double) ASPECT_RATIO_W);
-        if (targetHeight > panelHeight) {
-          targetHeight = panelHeight;
-          targetWidth = (int) (panelHeight * ASPECT_RATIO_W / (double) ASPECT_RATIO_H);
+          game.getCurrentRoom().hover(sceneX, sceneY);
+          repaint();
         }
-
-        int xOffset = (panelWidth - targetWidth) / 2;
-        int yOffset = (panelHeight - targetHeight) / 2;
-        double scale = targetHeight / (double) BASE_HEIGHT;
-
-        int mouseX = e.getX();
-        int mouseY = e.getY();
-
-        if (mouseX >= xOffset && mouseX <= xOffset + targetWidth &&
-            mouseY >= yOffset && mouseY <= yOffset + targetHeight) {
-
-          double sceneX = (mouseX - xOffset) / scale;
-          double sceneY = (mouseY - yOffset) / scale;
-
-          if (game.getCurrentRoom() instanceof rooms.MinesweeperRoom msRoom) {
-            msRoom.setHover(sceneX, sceneY);
-            repaint();
-          }
-        }
-      }
     });
 
     // Key listener pour poser/enlever drapeaux avec la touche A (par exemple)
@@ -198,6 +173,29 @@ public class UI extends JPanel {
     g2.drawString(gameOverText, x, y + ascent);
   }
 
+  /**
+   * Calculate and return the scale of the window
+   *
+   * @return the scale of the window
+   */
+  private double getScale() {
+    int panelWidth = getWidth();
+    int panelHeight = getHeight();
+    int targetHeight = (int) (panelWidth * ASPECT_RATIO_H / (double) ASPECT_RATIO_W);
+    if (targetHeight > panelHeight) {
+      targetHeight = panelHeight;
+    }
+
+    return targetHeight / (double) BASE_HEIGHT;
+  }
+
+  /**
+   * Initializes the graphics context for rendering.
+   * It sets the aspect ratio, scales the graphics, and centers the content.
+   *
+   * @param g the Graphics object used to create the Graphics2D
+   * @return a Graphics2D object with the right aspect ratio and scale
+   */
   private Graphics2D initGraphics(Graphics g) {
     int panelWidth = getWidth();
     int panelHeight = getHeight();

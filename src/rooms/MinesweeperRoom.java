@@ -27,11 +27,6 @@ public class MinesweeperRoom extends Room {
     private double hoveredSceneX = -1;
     private double hoveredSceneY = -1;
 
-
-
-    @SuppressWarnings("FieldMayBeFinal")
-    private BufferedImage bombImage;
-
     public MinesweeperRoom(String name, int id) {
         super(name, id);
         initGame();
@@ -42,13 +37,12 @@ public class MinesweeperRoom extends Room {
         } catch (IOException e) {
             System.err.println("Error loading Minesweeper background: " + e.getMessage());
         }
+    }
 
-        try {
-            bombImage = javax.imageio.ImageIO.read(new java.io.File("./rooms/assets/bomb.png"));
-        } catch (IOException e) {
-            System.err.println("Error loading bomb image: " + e.getMessage());
-            bombImage = null;
-        }
+    public MinesweeperRoom(String name, int id, List<Room> linkedTo) {
+        super(name, id, linkedTo);
+
+        initGame();
     }
 
     private void initGame() {
@@ -90,19 +84,43 @@ public class MinesweeperRoom extends Room {
         return count;
     }
 
+    private static class GridTransform {
+        final int gridWidth, gridHeight, startX, startY;
+        final int cellSize, rows, cols;
+
+        GridTransform(int rows, int cols, int cellSize, int sceneWidth, int sceneHeight) {
+            this.rows = rows;
+            this.cols = cols;
+            this.cellSize = cellSize;
+            this.gridWidth = cols * cellSize;
+            this.gridHeight = rows * cellSize;
+            this.startX = (sceneWidth - gridWidth) / 2;
+            this.startY = (sceneHeight - gridHeight) / 2;
+        }
+
+        int col(double x) {
+            return (int) ((x - startX) / cellSize);
+        }
+
+        int row(double y) {
+            return (int) ((y - startY) / cellSize);
+        }
+
+        boolean isValidCell(int r, int c) {
+            return r >= 0 && r < rows && c >= 0 && c < cols;
+        }
+    }
+
     @Override
     public void draw(Graphics2D g, int width, int height) {
         super.draw(g, width, height);
 
-        int gridWidth = cols * cellSize;
-        int gridHeight = rows * cellSize;
-        int startX = (width - gridWidth) / 2;
-        int startY = (height - gridHeight) / 2;
+        GridTransform t = new GridTransform(rows, cols, cellSize, width, height);
 
         for (int r=0; r<rows; r++) {
             for (int c=0; c<cols; c++) {
-                int x = startX + c * cellSize;
-                int y = startY + r * cellSize;
+                int x = t.startX + c * cellSize;
+                int y = t.startY + r * cellSize;
 
                 // Background color
                 if (r == hoveredRow && c == hoveredCol) {
@@ -154,15 +172,11 @@ public class MinesweeperRoom extends Room {
     public List<Action> click(double x, double y) {
         List<Action> resultActions = new ArrayList<>();
 
-        int gridWidth = cols * cellSize;
-        int gridHeight = rows * cellSize;
-        int startX = (1920 - gridWidth) / 2;
-        int startY = (1080 - gridHeight) / 2;
+        GridTransform t = new GridTransform(rows, cols, cellSize, 1920, 980);
+        int col = t.col(x);
+        int row = t.row(y);
 
-        int col = (int) ((x - startX) / cellSize);
-        int row = (int) ((y - startY) / cellSize);
-
-        if (!isValidCell(row, col)) return List.of();
+        if (!t.isValidCell(row, col)) return List.of();
 
         if (flags[row][col] || revealed[row][col]) {
             // Ne rien faire si case déjà révélée ou drapeau posé
@@ -173,12 +187,12 @@ public class MinesweeperRoom extends Room {
 
         if (bombs[row][col]) {
             // Bombe cliquée = game lost
-            resultActions.add(new Action.ShowHotbarText("BOOM! Vous avez perdu."));
-            resultActions.add(new Action.ChangeRoom(-1)); // Par exemple -1 = fin partie
-            // Réinitialiser la grille si tu veux (hors scope ici)
+            return List.of(
+                new Action.ShowHotbarText("BOOM! Vous avez perdu."),
+                new Action.ChangeRoom(0) // TODO: change
+            );
         } else {
             if (adjacentCounts[row][col] == 0) {
-                // Révéler récursivement les cases voisines sans bombes adjacentes
                 revealNeighbors(row, col);
             }
             resultActions.add(new Action.ShowHotbarText("Case révélée."));
@@ -186,7 +200,7 @@ public class MinesweeperRoom extends Room {
 
         if (checkWin()) {
             resultActions.add(new Action.ShowHotbarText("Bravo, vous avez gagné !"));
-            resultActions.add(new Action.ChangeRoom(-1)); // Fin ou passage suivant
+            resultActions.add(new Action.ChangeRoom(0)); //TODO: change
         }
 
         hoveredRow = row;
@@ -210,47 +224,39 @@ public class MinesweeperRoom extends Room {
     }
 
     public List<Action> flagAt(double x, double y) {
-        List<Action> actions = new ArrayList<>();
+        GridTransform t = new GridTransform(rows, cols, cellSize, 1920, 980);
+        int col = t.col(x);
+        int row = t.row(y);
 
-        int gridWidth = cols * cellSize;
-        int gridHeight = rows * cellSize;
-        int startX = (1920 - gridWidth) / 2;
-        int startY = (1080 - gridHeight) / 2;
-
-        int col = (int) ((x - startX) / cellSize);
-        int row = (int) ((y - startY) / cellSize);
-
-        if (!isValidCell(row, col)) return List.of();
+        if (!t.isValidCell(row, col)) return null;
 
         if (!revealed[row][col]) {
             flags[row][col] = !flags[row][col];
-            actions.add(new Action.ShowHotbarText(flags[row][col] ? "Drapeau posé" : "Drapeau retiré"));
+            return List.of(
+                new Action.ShowHotbarText(flags[row][col] ? "Drapeau posé" : "Drapeau retiré")
+            );
         }
 
-        return actions;
+        return null;
     }
 
-    public void setHover(double x, double y) {
-    int gridWidth = cols * cellSize;
-    int gridHeight = rows * cellSize;
-    int startX = (1920 - gridWidth) / 2;
-    int startY = (1080 - gridHeight) / 2;
+    public void hover(double x, double y) {
+        GridTransform t = new GridTransform(rows, cols, cellSize, 1920, 980);
+        int col = t.col(x);
+        int row = t.row(y);
 
-    int col = (int) ((x - startX) / cellSize);
-    int row = (int) ((y - startY) / cellSize);
-
-    if (isValidCell(row, col)) {
-        hoveredRow = row;
-        hoveredCol = col;
-        hoveredSceneX = x;
-        hoveredSceneY = y;
-    } else {
-        hoveredRow = -1;
-        hoveredCol = -1;
-        hoveredSceneX = -1;
-        hoveredSceneY = -1;
+        if (t.isValidCell(row, col)) {
+            hoveredRow = row;
+            hoveredCol = col;
+            hoveredSceneX = x;
+            hoveredSceneY = y;
+        } else {
+            hoveredRow = -1;
+            hoveredCol = -1;
+            hoveredSceneX = -1;
+            hoveredSceneY = -1;
+        }
     }
-}
 
     private boolean isValidCell(int r, int c) {
         return r >= 0 && r < rows && c >= 0 && c < cols;

@@ -15,7 +15,7 @@ public class Game {
 
     Bedroom bedroom = new Bedroom("Bedroom", 0);
     MainRoom mainRoom = new MainRoom("Main room", 1, List.of(bedroom));
-    MinesweeperRoom mineRoom = new MinesweeperRoom("Mine Room", 2);
+    MinesweeperRoom mineRoom = new MinesweeperRoom("Mine Room", 2, List.of(bedroom));
     bedroom.addNeighbour(mainRoom);
     bedroom.addNeighbour(mineRoom);
 
@@ -25,7 +25,6 @@ public class Game {
       UI ui = new UI(game);
       frame.setContentPane(ui);
 
-      // Fullscreen
       java.awt.GraphicsEnvironment graphics = java.awt.GraphicsEnvironment.getLocalGraphicsEnvironment();
       java.awt.GraphicsDevice device = graphics.getDefaultScreenDevice();
       device.setFullScreenWindow(frame);
