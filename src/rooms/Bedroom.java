@@ -11,7 +11,7 @@ import java.util.List;
 import javax.imageio.ImageIO;
 
 public class Bedroom extends Room {
-  private boolean minesweeperSolved = true;
+  private boolean minesweeperSolved = false;
   private boolean passwordValidated = false;
 
   private static final Rectangle doorHitbox = new Rectangle(928, 151, 536, 600);

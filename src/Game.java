@@ -40,6 +40,6 @@ public class Game {
     MainRoom mainRoom = new MainRoom("Main Room", 4, List.of(bedroom));
     bedroom.addNeighbour(mainRoom);
 
-    return new GameState(0, List.of(bedroom, mineRoom, bookRoom, passwordRoom, mainRoom), inv);
+    return new GameState(4, List.of(bedroom, mineRoom, bookRoom, passwordRoom, mainRoom), inv);
   }
 }

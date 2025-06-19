@@ -9,9 +9,18 @@ import java.util.List;
 import javax.imageio.ImageIO;
 
 import gameLogic.Action;
+import gameLogic.Rectangle;
 import gameLogic.Room;
+import items.Cle;
 
 public class MainRoom extends Room {
+  private static final Rectangle keyHitbox = new Rectangle(1400, 270, 163, 65);
+  private static final Rectangle chestHitbox = new Rectangle(0, 625, 350, 235);
+  private static final Rectangle doorHitbox = new Rectangle(620, 151, 600, 600);
+  private static final Rectangle screenHitbox = new Rectangle(68, 288, 225, 120);
+
+  private boolean keyCollected = false;
+  private boolean remoteCollected = false;
 
   public MainRoom(String name, int id) {
     super(name, id);
@@ -38,10 +47,51 @@ public class MainRoom extends Room {
   @Override
   public void draw(Graphics2D g, int width, int height) {
     super.draw(g, width, height);
+
+    screenHitbox.draw(g);
+    keyHitbox.draw(g);
+    chestHitbox.draw(g);
+    doorHitbox.draw(g);
   }
 
   @Override
   public List<Action> click(double x, double y) {
+    // key
+    if (keyHitbox.contains(x, y)) {
+      if (keyCollected) {
+        return List.of(new Action.ShowHotbarText("Vous avez déjà récupéré la clé."));
+      } else {
+        keyCollected = true;
+        return List.of(new Action.ShowHotbarText("Vous avez trouvé une clé !"), new Action.CollectItem(new Cle()));
+      }
+    }
+
+    // chest
+    else if (chestHitbox.contains(x, y)) {
+      if (keyCollected && !remoteCollected) {
+        remoteCollected = true;
+        return List.of(new Action.ShowHotbarText("Vous ouvrez le coffre avec la clé.\nVous trouvez une télécommande !"),
+                       new Action.CollectItem(new items.Remote()));
+      } else if (remoteCollected) {
+        return List.of(new Action.ShowHotbarText("Le coffre est vide"));
+      } else {
+        return List.of(new Action.ShowHotbarText("Il vous faut une clé"));
+      }
+    }
+
+    // screen
+    else if (screenHitbox.contains(x, y)) {
+      if (remoteCollected) {
+        return  List.of(new Action.ShowHotbarText("Vous appuyez sur le bouton de la télécommande.\nL'écran s'allume !"));
+      } else {
+        return List.of(new Action.ShowHotbarText("L'écran est éteint"));
+      }
+    }
+
+    // door
+    else if (doorHitbox.contains(x, y)) {
+      return List.of(new Action.ShowHotbarText("La porte est verrouillée."));
+    }
     return null;
   }
 
