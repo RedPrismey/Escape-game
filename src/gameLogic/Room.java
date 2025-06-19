@@ -48,6 +48,14 @@ public class Room {
   public void hover(double x, double y) {}
 
   /**
+   * Handles an action that occurs in the room.
+   * This method can be overridden by subclasses to provide specific behavior
+   *
+   * @param action the action to handle
+   */
+  public void handleAction(Action action) {}
+
+  /**
    * Tells if the move from the current room to the `destination` room is valid
    *
    * @param destination the room to which the player wants to move

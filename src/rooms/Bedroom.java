@@ -12,6 +12,7 @@ import javax.imageio.ImageIO;
 
 public class Bedroom extends Room {
   private boolean bookPickedUp = false;
+  private boolean minesweeperDoorOpen = false;
 
   private static final Rectangle doorHitbox = new Rectangle(928, 151, 536, 600);
   private static final Rectangle bookHitbox = new Rectangle(672, 600, 180, 40);
@@ -41,7 +42,11 @@ public class Bedroom extends Room {
   public List<Action> click(double x, double y) {
     // door logic
     if (doorHitbox.contains(x, y)) {
-      return List.of(new Action.ShowHotbarText("Skalala, nous sommes partis!"), new Action.ChangeRoom("Main Room"));
+      if (minesweeperDoorOpen) {
+        return List.of(new Action.ShowHotbarText("Skalala, nous sommes partis!"), new Action.ChangeRoom("Main Room"));
+      } else {
+        return List.of(new Action.ShowHotbarText("La porte est verouillée"));
+      }
     }
 
     // book logic
@@ -64,5 +69,13 @@ public class Bedroom extends Room {
     }
 
     return List.of();
+  }
+
+  @Override
+  public void handleAction(Action action) {
+    if (action instanceof Action.MinesweeperWon) {
+      this.minesweeperDoorOpen = true;
+    }
+    super.handleAction(action);
   }
 }
