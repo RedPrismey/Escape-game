@@ -48,6 +48,6 @@ public class Game {
     mainRoom.addNeighbour(outside);
 
 
-    return new GameState(0, List.of(bedroom, mineRoom, bookRoom, passwordRoom, mainRoom, brickBreakRoom, outside), inv);
+    return new GameState(4, List.of(bedroom, mineRoom, bookRoom, passwordRoom, mainRoom, brickBreakRoom, outside), inv);
   }
 }

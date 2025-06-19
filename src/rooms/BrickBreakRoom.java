@@ -22,8 +22,8 @@ public class BrickBreakRoom extends Room {
     private static final int BALL_SIZE = 18;
     private double ballX = GAME_WIDTH / 2.0;
     private double ballY = GAME_HEIGHT / 2.0;
-    private double ballDX = 4;
-    private double ballDY = -4;
+    private double ballDX = 10;
+    private double ballDY = -10;
 
     private int paddleX = (GAME_WIDTH - PADDLE_WIDTH) / 2;
 
