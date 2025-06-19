@@ -3,10 +3,9 @@ package UI;
 import gameLogic.Action;
 import gameLogic.GameState;
 import gameLogic.GameStatus;
-
-import javax.swing.*;
 import java.awt.*;
 import java.util.List;
+import javax.swing.*;
 
 /**
  * The UI class is responsible for rendering the game interface.
@@ -29,11 +28,11 @@ public class UI extends JPanel {
 
   public UI(GameState gameState) {
     this.game = gameState;
-
+  
     // repaint regularly to update the countdown
     new Timer(200, _ -> repaint()).start();
 
-    // for mouse events
+    // Mouse listener fusionné qui gère MinesweeperRoom en priorité
     addMouseListener(new java.awt.event.MouseAdapter() {
       @Override
       public void mouseClicked(java.awt.event.MouseEvent e) {
@@ -53,27 +52,84 @@ public class UI extends JPanel {
         int yOffset = (panelHeight - targetHeight) / 2;
         double scale = targetHeight / (double) BASE_HEIGHT;
 
-        // Raw mouse coords
         int mouseX = e.getX();
         int mouseY = e.getY();
 
-        // Subtract translation offset (un-centering)
-        double sceneX = (mouseX - xOffset) / scale;
-        double sceneY = (mouseY - yOffset) / scale;
-
-        // Only react if mouse is inside the scene area
         if (mouseX >= xOffset && mouseX <= xOffset + targetWidth &&
             mouseY >= yOffset && mouseY <= yOffset + targetHeight) {
-          System.out.printf("Mouse clicked in scene at: (%.2f, %.2f)\n", sceneX, sceneY);
-        }
 
-        if (game.status == GameStatus.PLAYING) {
-          List<Action> actions = game.getCurrentRoom().click(sceneX, sceneY);
-          game.executeAction(actions);
-          repaint();
+          double sceneX = (mouseX - xOffset) / scale;
+          double sceneY = (mouseY - yOffset) / scale;
+
+          if (game.getCurrentRoom() instanceof rooms.MinesweeperRoom msRoom) {
+            // Appelle la méthode click spécifique qui renvoie une liste d'actions
+            List<Action> actions = msRoom.click(sceneX, sceneY);
+            game.executeAction(actions);
+            repaint();
+          } else if (game.status == GameStatus.PLAYING) {
+            List<Action> actions = game.getCurrentRoom().click(sceneX, sceneY);
+            game.executeAction(actions);
+            repaint();
+          }
         }
       }
     });
+
+    // Ajoute le listener pour le mouvement souris (hover)
+    addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
+      @Override
+      public void mouseMoved(java.awt.event.MouseEvent e) {
+        int panelWidth = getWidth();
+        int panelHeight = getHeight();
+
+        int targetWidth = panelWidth;
+        int targetHeight = (int) (panelWidth * ASPECT_RATIO_H / (double) ASPECT_RATIO_W);
+        if (targetHeight > panelHeight) {
+          targetHeight = panelHeight;
+          targetWidth = (int) (panelHeight * ASPECT_RATIO_W / (double) ASPECT_RATIO_H);
+        }
+
+        int xOffset = (panelWidth - targetWidth) / 2;
+        int yOffset = (panelHeight - targetHeight) / 2;
+        double scale = targetHeight / (double) BASE_HEIGHT;
+
+        int mouseX = e.getX();
+        int mouseY = e.getY();
+
+        if (mouseX >= xOffset && mouseX <= xOffset + targetWidth &&
+            mouseY >= yOffset && mouseY <= yOffset + targetHeight) {
+
+          double sceneX = (mouseX - xOffset) / scale;
+          double sceneY = (mouseY - yOffset) / scale;
+
+          if (game.getCurrentRoom() instanceof rooms.MinesweeperRoom msRoom) {
+            msRoom.setHover(sceneX, sceneY);
+            repaint();
+          }
+        }
+      }
+    });
+
+    // Key listener pour poser/enlever drapeaux avec la touche A (par exemple)
+    addKeyListener(new java.awt.event.KeyAdapter() {
+      @Override
+      public void keyPressed(java.awt.event.KeyEvent e) {
+        System.out.println("Key pressed: " + e.getKeyCode());
+        if (e.getKeyCode() == java.awt.event.KeyEvent.VK_A) {
+          if (game.getCurrentRoom() instanceof rooms.MinesweeperRoom msRoom) {
+            // Pose/enlève drapeau sur la case survolée (implémente la méthode flagAt dans MinesweeperRoom)
+            double hoverX = msRoom.getHoveredSceneX();
+            double hoverY = msRoom.getHoveredSceneY();
+            List<Action> actions = msRoom.flagAt(hoverX, hoverY);
+            game.executeAction(actions);
+            repaint();
+          }
+        }
+      }
+    });
+
+    setFocusable(true);
+    requestFocusInWindow();
   }
 
   @Override
@@ -142,34 +198,10 @@ public class UI extends JPanel {
     g2.drawString(gameOverText, x, y + ascent);
   }
 
-  /**
-   * Calculate and return the scale of the window
-   *
-   * @return the scale of the window
-   */
-  private double getScale() {
-    int panelWidth = getWidth();
-    int panelHeight = getHeight();
-    int targetHeight = (int) (panelWidth * ASPECT_RATIO_H / (double) ASPECT_RATIO_W);
-    if (targetHeight > panelHeight) {
-      targetHeight = panelHeight;
-    }
-
-    return targetHeight / (double) BASE_HEIGHT;
-  }
-
-  /**
-   * Initializes the graphics context for rendering.
-   * It sets the aspect ratio, scales the graphics, and centers the content.
-   *
-   * @param g the Graphics object used to create the Graphics2D
-   * @return a Graphics2D object with the right aspect ratio and scale
-   */
   private Graphics2D initGraphics(Graphics g) {
     int panelWidth = getWidth();
     int panelHeight = getHeight();
 
-    // for the aspect ratio 16:9
     int targetWidth = panelWidth;
     int targetHeight = (int) (panelWidth * ASPECT_RATIO_H / (double) ASPECT_RATIO_W);
     if (targetHeight > panelHeight) {
@@ -180,16 +212,13 @@ public class UI extends JPanel {
     int xOffset = (panelWidth - targetWidth) / 2;
     int yOffset = (panelHeight - targetHeight) / 2;
 
-    // black background in case screen is not 16:9
     g.setColor(Color.BLACK);
     g.fillRect(0, 0, panelWidth, panelHeight);
 
-    // to translate in 19:9
     Graphics2D g2 = (Graphics2D) g.create();
     g2.translate(xOffset, yOffset);
     g2.setClip(0, 0, targetWidth, targetHeight);
 
-    // Scaling
     double scale = targetHeight / (double) BASE_HEIGHT;
     g2.scale(scale, scale);
 

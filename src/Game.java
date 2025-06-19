@@ -1,12 +1,9 @@
-import java.awt.EventQueue;
-
-import java.util.List;
-
-import javax.swing.JFrame;
-
 import UI.UI;
 import gameLogic.*;
 import items.*;
+import java.awt.EventQueue;
+import java.util.List;
+import javax.swing.JFrame;
 import rooms.*;
 
 public class Game {
@@ -18,9 +15,11 @@ public class Game {
 
     Bedroom bedroom = new Bedroom("Bedroom", 0);
     MainRoom mainRoom = new MainRoom("Main room", 1, List.of(bedroom));
+    MinesweeperRoom mineRoom = new MinesweeperRoom("Mine Room", 2);
     bedroom.addNeighbour(mainRoom);
+    bedroom.addNeighbour(mineRoom);
 
-    GameState game = new GameState(0, List.of(bedroom, mainRoom), inv);
+    GameState game = new GameState(0, List.of(bedroom, mainRoom,mineRoom), inv);
 
     EventQueue.invokeLater(() -> {
       UI ui = new UI(game);

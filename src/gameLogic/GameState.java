@@ -1,8 +1,7 @@
 package gameLogic;
 
-import java.util.List;
-
 import items.Inventory;
+import java.util.List;
 
 /**
  * The GameState class represents the current state of the game.
@@ -125,4 +124,7 @@ public class GameState {
   public String getHotbarText() {
     return hotbarText;
   }
+  public void setHotbarText(String text) {
+    this.hotbarText = text;
+}
 }
