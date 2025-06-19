@@ -32,10 +32,6 @@ public class Bedroom extends Room {
   @Override
   public void draw(java.awt.Graphics2D g, int width, int height) {
     super.draw(g, width, height);
-
-    doorHitbox.draw(g);
-    bookHitbox.draw(g);
-    screenHitbox.draw(g);
   }
 
   @Override
@@ -79,6 +75,5 @@ public class Bedroom extends Room {
     } else if (action instanceof Action.PasswordValidated) {
       this.passwordValidated = true;
     }
-    super.handleAction(action);
   }
 }

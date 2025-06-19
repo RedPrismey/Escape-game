@@ -3,7 +3,7 @@ package items;
 import java.awt.*;
 
 public class Inventory {
-  private final static int INVENTORY_SIZE = 6;
+  private final static int INVENTORY_SIZE = 3;
   private final Item[] items = new Item[INVENTORY_SIZE];
   private int numberOfItems = 0;
   private boolean full = false;

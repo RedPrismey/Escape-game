@@ -32,7 +32,12 @@ public abstract class Action {
   public static class MinesweeperWon extends Action {
     public MinesweeperWon() {}
   }
+
   public static class PasswordValidated extends Action {
     public PasswordValidated() {}
+  }
+
+  public static class BrickBreakWon extends Action {
+    public BrickBreakWon() {}
   }
 }
