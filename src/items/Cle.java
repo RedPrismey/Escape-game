@@ -10,7 +10,7 @@ public class Cle extends Item {
     super("Clé");
 
     try {
-      URL url = getClass().getResource("./assets/cle.jpg");
+      URL url = getClass().getResource("./assets/key.png");
       BufferedImage s = ImageIO.read(url);
       super.setSprite(s);
     } catch (IOException e) {

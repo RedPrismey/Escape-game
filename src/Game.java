@@ -37,9 +37,17 @@ public class Game {
     MinesweeperRoom mineRoom = new MinesweeperRoom("Mine Room", 3, List.of(bedroom));
     bedroom.addNeighbour(mineRoom);
 
-    MainRoom mainRoom = new MainRoom("Main Room", 4, List.of(bedroom));
+    MainRoom mainRoom = new MainRoom("Main Room", 4);
+    mainRoom.addNeighbour(bedroom);
     bedroom.addNeighbour(mainRoom);
 
-    return new GameState(0, List.of(bedroom, mineRoom, bookRoom, passwordRoom, mainRoom), inv);
+    BrickBreakRoom brickBreakRoom = new BrickBreakRoom("Brick Break Room", 5, List.of(mainRoom));
+    mainRoom.addNeighbour(brickBreakRoom);
+
+    Outside outside = new Outside("Outside", 6, List.of(mainRoom));
+    mainRoom.addNeighbour(outside);
+
+
+    return new GameState(0, List.of(bedroom, mineRoom, bookRoom, passwordRoom, mainRoom, brickBreakRoom, outside), inv);
   }
 }

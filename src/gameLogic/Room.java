@@ -141,6 +141,11 @@ public class Room {
     return null;
   }
 
+  // Ajout d'une méthode par défaut pour handleKeyReleased
+  public List<Action> handleKeyReleased(java.awt.event.KeyEvent e) {
+    return null;
+  }
+
   @Override
   public boolean equals(Object obj) {
     if (this == obj)

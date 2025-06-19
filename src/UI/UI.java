@@ -57,7 +57,7 @@ public class UI extends JPanel {
     this.game = gameState;
 
     // repaint regularly to update the countdown
-    new Timer(200, _ -> repaint()).start();
+    new Timer(10, _ -> repaint()).start();
 
     addMouseListener(new java.awt.event.MouseAdapter() {
       @Override
@@ -90,6 +90,12 @@ public class UI extends JPanel {
       @Override
       public void keyPressed(java.awt.event.KeyEvent e) {
         List<Action> actions = game.getCurrentRoom().handleKeyPressed(e);
+        game.executeAction(actions);
+        repaint();
+      }
+      @Override
+      public void keyReleased(java.awt.event.KeyEvent e) {
+        List<Action> actions = game.getCurrentRoom().handleKeyReleased(e);
         game.executeAction(actions);
         repaint();
       }
@@ -133,16 +139,22 @@ public class UI extends JPanel {
     g.setColor(Color.BLACK);
 
     FontMetrics fm = g.getFontMetrics();
-    int x = 700;
-    int y = HOTBAR_Y + (HOTBAR_HEIGHT + fm.getAscent()) / 2 - 10;
 
     String[] lines = text.split("\n");
+
+    int maxWidth = 0;
+    for (String line : lines) {
+      int w = fm.stringWidth(line);
+      if (w > maxWidth) maxWidth = w;
+    }
     int lineHeight = fm.getHeight();
     int totalHeight = lines.length * lineHeight;
     int startY = HOTBAR_Y + (HOTBAR_HEIGHT - totalHeight) / 2 + fm.getAscent();
 
     for (int i = 0; i < lines.length; i++) {
-      g.drawString(lines[i], x, startY + i * lineHeight);
+      int lineWidth = fm.stringWidth(lines[i]);
+      int lineX = (BASE_WIDTH - lineWidth) / 2;
+      g.drawString(lines[i], lineX, startY + i * lineHeight);
     }
   }
 
