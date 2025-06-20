@@ -32,7 +32,7 @@ public class Book extends Room {
 
     g.setColor(Color.BLACK);
     g.setFont(new java.awt.Font("Serif", java.awt.Font.BOLD, 30));
-    String texte = "Jeudi 7 Juin 2372 :\n\nCher journal,\nCa fait aujourd'hui 5 mois que je suis enfermé dans ce vaisseau, au milieu de l'espace.\nJe n'ai plus d'espoir de m'en sortir,\nmais j'ai remarqué que les gardes ne nettoyaient pas le vaisseau.\n\nDonc pour les futurs prisonniers, voici un message :\nYr pbqr qr yn cbegr rfg : PUNATRguvfCNFFJBEQ. \nFv ibhf neevirm à ibhf épunccre ninag yr qépbyyntr, ibhf fheivierm";
+    String texte = "Jeudi 13 Juin 2313 :\n\nCher journal,\nCa fait aujourd'hui 13 mois que je suis enfermé dans ce vaisseau, au milieu de l'espace.\nJe n'ai plus d'espoir de m'en sortir,\nmais j'ai remarqué que les gardes ne nettoyaient pas le vaisseau.\n\nDonc pour les futurs prisonniers, voici un message :\nYr pbqr qr yn cbegr rfg : PUNATRguvfCNFFJBEQ. \nFv ibhf neevirm à ibhf épunccre ninag yr qépbyyntr, ibhf fheivierm";
 
     String[] lignes = texte.split("\n");
     FontMetrics metrics = g.getFontMetrics();

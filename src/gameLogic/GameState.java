@@ -107,7 +107,6 @@ public class GameState {
         Room destination = getRoom(room.roomName);
 
         if (current.validMove(destination)) {
-          System.out.println(destination.id + " moved");
           setCurrentRoom(destination.id);
         } else {
           System.err.println("Invalid move to room: " + room.roomName);
@@ -140,4 +139,3 @@ public class GameState {
     return hotbarText;
   }
 }
-

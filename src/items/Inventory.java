@@ -11,7 +11,8 @@ public class Inventory {
                                                                      // dans l'inventaire sans le parcourir à
                                                                      // chaque fois
 
-  public Inventory() {}
+  public Inventory() {
+  }
 
   public void draw(Graphics g, int x, int y, int width, int height) {
     int totalSlots = Inventory.getInventorySize();
@@ -38,7 +39,7 @@ public class Inventory {
         g.drawImage(item.getSprite(), slotX + 4, slotY + 4, slotSize - 8, slotSize - 8, null);
       }
     }
-    }
+  }
 
   /**
    * Add the Item `item` to the Inventory
@@ -71,7 +72,8 @@ public class Inventory {
    * Remove the first item with the name matching `itemName`
    *
    * @param itemName the name of the Item to remove
-   * @throws ItemNotFoundException if no Item with the name `itemName` is found in the Inventory
+   * @throws ItemNotFoundException if no Item with the name `itemName` is found in
+   *                               the Inventory
    */
   public void removeItem(String itemName) {
     boolean found = false;
@@ -101,8 +103,9 @@ public class Inventory {
    * Delete the Item at index `index`
    *
    * @param index the index of the Item to remove
-   * @throws IndexOutOfBoundsException if `index` is not in the range [0, INVENTORY_SIZE)
-   * @throws NoItemAtIndexException if there is no Item at index `index`
+   * @throws IndexOutOfBoundsException if `index` is not in the range [0,
+   *                                   INVENTORY_SIZE)
+   * @throws NoItemAtIndexException    if there is no Item at index `index`
    */
   public void removeItem(int index) {
     if (index >= INVENTORY_SIZE || index < 0) {
