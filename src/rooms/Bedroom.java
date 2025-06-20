@@ -43,15 +43,16 @@ public class Bedroom extends Room {
       } else if (!passwordValidated) {
         return List.of(new Action.ShowHotbarText("La porte est verouillée"));
       } else {
-        return List.of(new Action.ShowHotbarText("Bizarre, la porte est encore fermée.\nJe devrais peut-être revérifier la console"));
+        return List.of(new Action.ShowHotbarText(
+            "Bizarre, la porte est encore fermée.\nJe devrais peut-être revérifier la console"));
       }
     }
 
     // book logic
     else if (bookHitbox.contains(x, y)) {
-        return List.of(
-            new Action.ShowHotbarText("Vous lisez le livre"),
-            new Action.ChangeRoom("Book Room"));
+      return List.of(
+          new Action.ShowHotbarText("Vous lisez le livre"),
+          new Action.ChangeRoom("Book Room"));
 
     }
 
@@ -61,7 +62,7 @@ public class Bedroom extends Room {
         return List.of(new Action.ChangeRoom("Password Room"), new Action.ShowHotbarText("Tiens, une console"));
       } else {
         return List.of(
-                new Action.ShowHotbarText("? Pourquoi est-ce qu'il y a un démineur ?"), new Action.ChangeRoom("Mine Room"));
+            new Action.ShowHotbarText("? Pourquoi est-ce qu'il y a un démineur ?"), new Action.ChangeRoom("Mine Room"));
       }
     }
 

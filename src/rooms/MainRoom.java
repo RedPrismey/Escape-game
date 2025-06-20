@@ -68,13 +68,13 @@ public class MainRoom extends Room {
       if (keyCollected && !remoteCollected) {
         remoteCollected = true;
         return List.of(new Action.ShowHotbarText("Vous ouvrez le coffre avec la clé.\nVous trouvez une télécommande !"),
-                       new Action.CollectItem(new items.Remote()));
+            new Action.CollectItem(new items.Remote()));
       } else if (remoteCollected && !brickBreakWon) {
         return List.of(new Action.ShowHotbarText("Le coffre est vide"));
       } else if (brickBreakWon && !uniformCollected) {
         uniformCollected = true;
-        return  List.of(new Action.ShowHotbarText("Il y avait un double fond !\nVous trouvez un uniforme !"),
-                        new Action.CollectItem(new items.Uniform()));
+        return List.of(new Action.ShowHotbarText("Il y avait un double fond !\nVous trouvez un uniforme !"),
+            new Action.CollectItem(new items.Uniform()));
       } else if (uniformCollected) {
         return List.of(new Action.ShowHotbarText("Le coffre est vraiment vide cette fois"));
       } else {
@@ -84,9 +84,12 @@ public class MainRoom extends Room {
 
     // screen
     else if (screenHitbox.contains(x, y)) {
-      if (remoteCollected) {
-        return  List.of(new Action.ShowHotbarText("Vous appuyez sur le bouton de la télécommande.\nL'écran s'allume !"),
-                        new Action.ChangeRoom("Brick Break Room"));
+      if (remoteCollected && !brickBreakWon) {
+        return List.of(new Action.ShowHotbarText("Vous appuyez sur le bouton de la télécommande.\nL'écran s'allume !"),
+            new Action.ChangeRoom("Brick Break Room"));
+      } else if (brickBreakWon) {
+        return List.of(new Action.ShowHotbarText("Vous avez déjà gagné,\nvous devriez chercher d'où vient le click"),
+            new Action.ChangeRoom("Brick Break Room"));
       } else {
         return List.of(new Action.ShowHotbarText("L'écran est éteint"));
       }
@@ -95,9 +98,11 @@ public class MainRoom extends Room {
     // door
     else if (doorHitbox.contains(x, y)) {
       if (!uniformCollected) {
-        return List.of(new Action.ShowHotbarText("Vérification d'identité en cours...\nVous n'avez pas d'uniforme, vous ne pouvez pas sortir !"));
+        return List.of(new Action.ShowHotbarText(
+            "Vérification d'identité en cours...\nVous n'avez pas d'uniforme, vous ne pouvez pas sortir !"));
       } else {
-        return List.of(new Action.ShowHotbarText("Vous avez réussi à vous enfuir, Félicitation !"), new Action.ChangeRoom("Outside"));
+        return List.of(new Action.ShowHotbarText("Vous avez réussi à vous enfuir, Félicitation !"),
+            new Action.ChangeRoom("Outside"));
       }
     }
 

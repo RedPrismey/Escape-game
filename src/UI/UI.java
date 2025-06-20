@@ -81,9 +81,9 @@ public class UI extends JPanel {
         double sceneX = t.sceneX(e.getX());
         double sceneY = t.sceneY(e.getY());
 
-          game.getCurrentRoom().hover(sceneX, sceneY);
-          repaint();
-        }
+        game.getCurrentRoom().hover(sceneX, sceneY);
+        repaint();
+      }
     });
 
     addKeyListener(new java.awt.event.KeyAdapter() {
@@ -93,6 +93,7 @@ public class UI extends JPanel {
         game.executeAction(actions);
         repaint();
       }
+
       @Override
       public void keyReleased(java.awt.event.KeyEvent e) {
         List<Action> actions = game.getCurrentRoom().handleKeyReleased(e);
@@ -145,7 +146,8 @@ public class UI extends JPanel {
     int maxWidth = 0;
     for (String line : lines) {
       int w = fm.stringWidth(line);
-      if (w > maxWidth) maxWidth = w;
+      if (w > maxWidth)
+        maxWidth = w;
     }
     int lineHeight = fm.getHeight();
     int totalHeight = lines.length * lineHeight;
@@ -182,23 +184,6 @@ public class UI extends JPanel {
 
     g2.setColor(Color.RED);
     g2.drawString(gameOverText, x, y + ascent);
-  }
-
-  /**
-   * Calculate and return the scale of the window
-   *
-   * @return the scale of the window
-   */
-  private double getScale() {
-    int panelWidth = getWidth();
-    int panelHeight = getHeight();
-    int targetHeight = (int) (panelWidth * ASPECT_RATIO_H / (double) ASPECT_RATIO_W);
-
-    if (targetHeight > panelHeight) {
-      targetHeight = panelHeight;
-    }
-
-    return targetHeight / (double) BASE_HEIGHT;
   }
 
   /**
