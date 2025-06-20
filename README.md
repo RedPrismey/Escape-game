@@ -1,7 +1,7 @@
 # Projet
 
 Escape game réalisé dans le cadre d'un projet de cours. 
-Certains points restent à améliorer, mais le jeu est dans un état jouable.
+Certains points peuvent encore être améliorés, mais le jeu reste appréciable.
 
 # Lancer le jeu
 
